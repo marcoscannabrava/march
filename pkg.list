@@ -1,0 +1,88 @@
+# --------------------------------------------------- // System
+pipewire                                               | audio/video server
+pipewire-alsa                                          | pipewire alsa client
+pipewire-audio                                         | pipewire audio client
+pipewire-jack                                          | pipewire jack client
+pipewire-pulse                                         | pipewire pulseaudio client
+gst-plugin-pipewire                                    | pipewire gstreamer client
+wireplumber                                            | pipewire session manager
+pavucontrol                                            | pulseaudio volume control
+pamixer                                                | pulseaudio cli mixer
+networkmanager                                         | network manager
+network-manager-applet                                 | network manager system tray utility
+bluez                                                  | bluetooth protocol stack
+bluez-utils                                            | bluetooth utility cli
+blueman                                                | bluetooth manager gui
+brightnessctl                                          | screen brightness control
+playerctl                                              | media controls
+udiskie                                                | manage removable media
+
+# --------------------------------------------------- // Window Manager
+hyprland                                               | wlroots-based wayland compositor
+dunst                                                  | notification daemon
+rofi-wayland                                           | application launcher
+waybar                                                 | system bar
+swww                                                   | wallpaper
+hyprlock                                               | lock screen
+wlogout                                                | logout menu
+grim                                                   | screenshot tool
+hyprpicker                                             | color picker
+slurp                                                  | region select for screenshot/screenshare
+satty                                                  | Modern Screenshot Annotation
+cliphist                                               | clipboard manager
+wl-clip-persist                                        | Keep Wayland clipboard even after programs close (avoids crashes)
+
+
+# --------------------------------------------------- // Dependencies
+pacman-contrib                                         | for system update check
+parallel                                               | for parallel processing
+jq                                                     | for json processing
+imagemagick                                            | for image processing
+qt5-imageformats                                       | for dolphin image thumbnails
+ffmpegthumbs                                           | for dolphin video thumbnails
+kde-cli-tools                                          | for dolphin file type defaults
+libnotify                                              | for notifications
+noto-fonts-emoji                                       | emoji font
+
+# --------------------------------------------------- // Theming
+nwg-look                                               | gtk configuration tool
+qt5-wayland                                            | wayland support in qt5
+qt6-wayland                                            | wayland support in qt6
+
+# --------------------------------------------------- // HyDE
+hypridle                                               | idle daemon
+
+# --------------------------------------------------- // Shell - zsh
+starship                                               | customizable shell prompt written in Rust
+bat                                                    | enhanced version of cat
+eza                                                    | file lister for zsh
+duf                                                    | prettier version of df for zsh
+fastfetch                                              | system information fetch tool
+
+# --------------------------------------------------- // Utilities
+xdg-desktop-portal-gtk                                 | xdg desktop portal using gtk
+wf-recorder                                            | Screen recorder for wlroots-based compositors such as sway
+swayosd-git                                            | A GTK based on screen display for keyboard shortcuts like caps-lock and volume
+man-db                                                 | A utility for reading man pages
+keyd-git                                               | A key remapping daemon for linux
+btop                                                   | A monitor of resources
+rclone-git                                             | Sync files to and from Google Drive, S3, etc
+git-lfs                                                | Git extension for versioning large files
+keychain                                               | Manager for ssh-agent, unlock keys on login
+
+# --------------------------------------------------- // Applications
+google-chrome                                          | Google Chrome Browser
+kitty                                                  | terminal
+dolphin                                                | kde file manager
+ark                                                    | kde file archiver
+unzip                                                  | extracting zip files
+vim                                                    | terminal text editor
+visual-studio-code-bin                                 | ide text editor
+nwg-displays                                           | monitor management utility
+fzf                                                    | Command-line fuzzy finder
+slack-desktop                                          | Slack Messaging App
+qbittorrent-nox                                        | Torrent Client
+dbeaver                                                | Database Client
+docker                                                 | pack, ship and run containers
+docker-compose                                         | docker containers, but easier
+
