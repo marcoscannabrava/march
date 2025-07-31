@@ -60,7 +60,10 @@ duf                                                    | prettier version of df 
 fastfetch                                              | system information fetch tool
 
 # --------------------------------------------------- // Utilities
+polkit-gnome                                           | authentication agent
+xdg-desktop-portal-hyprland                            | xdg desktop portal for hyprland
 xdg-desktop-portal-gtk                                 | xdg desktop portal using gtk
+xdg-user-dirs                                          | Manage user directories
 wf-recorder                                            | Screen recorder for wlroots-based compositors such as sway
 swayosd-git                                            | A GTK based on screen display for keyboard shortcuts like caps-lock and volume
 man-db                                                 | A utility for reading man pages
