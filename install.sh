@@ -1,3 +1,5 @@
+CUR_DIR=`pwd`
+
 if [ -f utils.sh ]; then source utils.sh;
 else echo "utils.sh not found."; exit 1
 fi
@@ -18,10 +20,23 @@ log_green "pacman configured successfully." || \
 log_red "minor: pacman configuration update failed..."
 
 
+log_purple "configuring mirrors..."
+log_purple "------------------------------------"
+sudo pacman -S reflector
+reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist # sort mirrors by speed
+
+
+log_purple "installing yay..."
+log_purple "------------------------------------"
+cd $HOME
+git clone https://aur.archlinux.org/yay-bin.git .yay-bin
+cd .yay-bin
+makepkg -si
+cd $CUR_DIR
+
+
 log_purple "updating package database..."
 log_purple "------------------------------------"
-sudo pacman -S reflector yay # install yay aur helper
-reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist # sort mirrors by speed
 sudo yay -Syu
 
 
