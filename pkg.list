@@ -25,13 +25,13 @@ waybar                                                 | system bar
 swww                                                   | wallpaper
 hyprlock                                               | lock screen
 wlogout                                                | logout menu
+hypridle                                               | idle daemon
 grim                                                   | screenshot tool
 hyprpicker                                             | color picker
 slurp                                                  | region select for screenshot/screenshare
 satty                                                  | Modern Screenshot Annotation
 cliphist                                               | clipboard manager
 wl-clip-persist                                        | Keep Wayland clipboard even after programs close (avoids crashes)
-
 
 # --------------------------------------------------- // Dependencies
 pacman-contrib                                         | for system update check
@@ -48,9 +48,6 @@ noto-fonts-emoji                                       | emoji font
 nwg-look                                               | gtk configuration tool
 qt5-wayland                                            | wayland support in qt5
 qt6-wayland                                            | wayland support in qt6
-
-# --------------------------------------------------- // HyDE
-hypridle                                               | idle daemon
 
 # --------------------------------------------------- // Shell - zsh
 starship                                               | customizable shell prompt written in Rust
