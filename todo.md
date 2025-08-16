@@ -1,0 +1,4 @@
+- get dotfiles (vscode, git, etc)
+- include zenbook keymapping script
+- include hyprland auto-start and auto-login script
+- wlogout may be unnecessary

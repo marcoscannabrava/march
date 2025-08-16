@@ -11,8 +11,7 @@ if ! command -v yay &> /dev/null; then
     sudo pacman -Syu --needed git base-devel
 
     log_purple "configuring pacman..."
-    ./config_pacman.sh && \
-    log_green "pacman configured successfully." || log_yellow "pacman already configured."
+    config_pacman # from utils.sh
 
     log_purple "configuring mirrors..."
     sudo pacman -S reflector

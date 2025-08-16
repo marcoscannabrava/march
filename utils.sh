@@ -41,9 +41,22 @@ function backup() {
     local dest="${2:-${src}.bkp}"
     if [[ -z "$src" ]]; then log_red "No source file specified for backup."; return 1; fi
 
-    cp -a -- "$src" "$dest" && \
+    mv "$src" "$dest" && \
     log_green "'$src' backed up." || \
     (log_red "Failed to backup '$src'."; return 1)
+}
+
+function config_pacman() {
+    if [ ! -f /etc/pacman.conf.bkp ]; then
+        sudo cp /etc/pacman.conf /etc/pacman.conf.bkp
+        sudo sed -i "/^#Color/c\Color\nILoveCandy
+        /^#VerbosePkgLists/c\VerbosePkgLists
+        /^#ParallelDownloads/c\ParallelDownloads = 5" /etc/pacman.conf
+        sudo sed -i '/^#\[multilib\]/,+1 s/^#//' /etc/pacman.conf
+        log_green "pacman configured successfully."
+        return 0
+    fi
+    log_yellow "pacman already configured."
 }
 
 cat <<EOF
