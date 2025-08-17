@@ -1,0 +1,12 @@
+#!/bin/bash
+# Backup script: copy Google Drive to Backblaze
+
+echo "-----> Running Google Drive backup script on `date +"%Y-%m-%d-%H:%M:%S"`" |& tee -a /var/log/cron.backup.log
+
+rclone copy --drive-chunk-size 64M --fast-list --transfers 20 --ignore-checksum --update google-drive:/ b2:gdrivebkp  |& tee -a /var/log/cron.backup.log
+
+echo "-----> Google Drive Backup finished on `date +"%Y-%m-%d-%H:%M:%S"`" |& tee -a /var/log/cron.backup.log
+if command -v notify-send &> /dev/null
+then
+    notify-send "Backup finished" `date +"%Y-%m-%d-%H:%M:%S"`
+fi

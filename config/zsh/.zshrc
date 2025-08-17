@@ -1,39 +1,89 @@
-# TODO
-#  Plugins 
-# oh-my-zsh plugins are loaded  in $ZDOTDIR/.user.zsh file, see the file for more information
 
-#  Aliases 
-# Override aliases here in '$ZDOTDIR/.zshrc' (already set in .zshenv)
+if [ ! $XDG_SESSION_TYPE = "wayland" ]; then
+  ZSH=$HOME/.oh-my-zsh
 
-# # Helpful aliases
-# alias c='clear'                                                        # clear terminal
-# alias l='eza -lh --icons=auto'                                         # long list
-# alias ls='eza -1 --icons=auto'                                         # short list
-# alias ll='eza -lha --icons=auto --sort=name --group-directories-first' # long list all
-# alias ld='eza -lhD --icons=auto'                                       # long list dirs
-# alias lt='eza --icons=auto --tree'                                     # list folder as tree
-# alias un='$aurhelper -Rns'                                             # uninstall package
-# alias up='$aurhelper -Syu'                                             # update system/package/aur
-# alias pl='$aurhelper -Qs'                                              # list installed package
-# alias pa='$aurhelper -Ss'                                              # list available package
-# alias pc='$aurhelper -Sc'                                              # remove unused cache
-# alias po='$aurhelper -Qtdq | $aurhelper -Rns -'                        # remove unused packages, also try > $aurhelper -Qqd | $aurhelper -Rsu --print -
-# alias vc='code'                                                        # gui code editor
-# alias fastfetch='fastfetch --logo-type kitty'
+  # ZSH theme and plugins
+  ZSH_THEME="canna"
+  plugins=(
+    git
+    gitfast
+    last-working-dir
+    common-aliases
+    zsh-syntax-highlighting
+    history-substring-search
+    colored-man-pages
+    docker docker-compose
+    fzf
+  )
 
-# # Directory navigation shortcuts
-# alias ..='cd ..'
-# alias ...='cd ../..'
-# alias .3='cd ../../..'
-# alias .4='cd ../../../..'
-# alias .5='cd ../../../../..'
+  export FZF_BASE=/usr/bin/fzf
+fi
 
-# # Always mkdir a path (this doesn't inhibit functionality to make a single dir)
-# alias mkdir='mkdir -p'
+# Actually load Oh-My-Zsh
+source "${ZSH}/oh-my-zsh.sh"
+unalias rm # No interactive rm by default (brought by plugins/common-aliases)
 
-#  This is your file 
-# Add your configurations here
-# export EDITOR=nvim
-export EDITOR=code
+# Prevent Homebrew from reporting - https://github.com/Homebrew/brew/blob/master/share/doc/homebrew/Analytics.md
+export HOMEBREW_NO_ANALYTICS=1
 
-# unset -f command_not_found_handler # Uncomment to prevent searching for commands not found in package manager
+# Rails, Ruby, NodeJs uses the local `bin` folder to store binstubs.
+export PATH="./bin:./node_modules/.bin:${PATH}:/usr/local/sbin"
+
+# load user ~/.aliases
+[[ -f "$HOME/.aliases" ]] && source "$HOME/.aliases"
+
+# Encoding stuff for the terminal
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export BUNDLER_EDITOR="code"
+
+# Go binaries
+export PATH=$PATH:/usr/local/go/bin
+
+# devcontainer - needs to be installed in vscode
+export PATH=$PATH:/home/marcos/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers/cli-bin
+
+# opencode
+export PATH=/home/marcos/.opencode/bin:$PATH
+
+# Autocomplete for Terraform
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/local/bin/terraform terraform
+
+# ------- Package/Version Managers -------
+
+# nvm - Node Version Manager
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+# ------- END Package/Version Managers -------
+
+
+# ------------ ZSH load hook --------------- #
+# Load .workspace file if it exists in a directory when zsh is loaded or when cd'ing
+# the file's first line needs the magic string
+function load_workspace() {
+  if [ -f .workspace ] && [ "`head -1 .workspace`" = "# m4s runs-on-open: true" ]; then
+    source .workspace
+  fi
+}
+load_workspace
+
+function cd_func() {
+  builtin cd "$@"
+  load_workspace
+}
+alias cd="cd_func"
+
+
+# requires installing cmake manually in ~/apps/
+if [ -d "$HOME/apps/cmake-4.0.2-linux-x86_64/bin" ]; then
+  export PATH=$PATH:$HOME/apps/cmake-4.0.2-linux-x86_64/bin
+fi
+
+# requires installing emscripten manually in ~/apps/
+if [ -d "$HOME/apps/emsdk" ]; then
+  export EMSDK_QUIET=1; source "/home/marcos/apps/emsdk/emsdk_env.sh"
+fi
+
