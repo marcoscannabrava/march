@@ -28,7 +28,7 @@ export HOMEBREW_NO_ANALYTICS=1
 export PATH="./bin:./node_modules/.bin:${PATH}:/usr/local/sbin"
 
 # load user ~/.aliases
-[[ -f "$HOME/.aliases" ]] && source "$HOME/.aliases"
+[[ -f "$HOME/zsh/.aliases" ]] && source "$HOME/zsh/.aliases"
 
 # Encoding stuff for the terminal
 export LANG=en_US.UTF-8

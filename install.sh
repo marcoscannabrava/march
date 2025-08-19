@@ -1,7 +1,7 @@
 ORIGINAL_DIR=`pwd`
 REPO_DIR="$(dirname "$(readlink -f "$0")")"
 
-if [ -f utils.sh ]; then source utils.sh;
+if [ -f $REPO_DIR/utils.sh ]; then source $REPO_DIR/utils.sh;
 else echo "utils.sh not found."; exit 1; fi
 
 INSTALL_PACKAGES=true
@@ -9,8 +9,7 @@ INSTALL_PACKAGES=true
 while getopts "h,help,n,no-packages" option; do
     case $option in
         n|-no-packages)
-            log_purple "Skipping package installation."
-            echo "Skipping package installation. You can run this script again later to install packages."
+            log_purple "-no-packages: Skipping package installation...\n\n"
             INSTALL_PACKAGES=false
             ;;
         h|-help|*)
@@ -69,11 +68,16 @@ log_purple "#######################################"
 log_purple "######### symlinking dotfiles #########"
 log_purple "#######################################\n"
 for file in $(find config -type f); do
+    # files in config/_home are symlinked to $HOME, otherwise to $HOME/.config
+    if [[ "$file" == config/_home/* ]]; then
+        target="$HOME/$(basename "$file")"
+    else
+        target="$HOME/.$file"
+    fi
     if [ -L "$HOME/.$file" ]; then
         log_yellow "$file already linked."
         continue
     fi
-    target="$HOME/.$file"
     if [ -e "$target" ]; then
         backup "$target"
     fi
