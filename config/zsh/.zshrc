@@ -1,27 +1,25 @@
 
-if [ ! $XDG_SESSION_TYPE = "wayland" ]; then
-  ZSH=$HOME/.oh-my-zsh
+ZSH=$HOME/.oh-my-zsh
 
-  # ZSH theme and plugins
-  ZSH_THEME="canna"
-  plugins=(
-    git
-    gitfast
-    last-working-dir
-    common-aliases
-    zsh-syntax-highlighting
-    history-substring-search
-    colored-man-pages
-    docker docker-compose
-    fzf
-  )
+# ZSH theme and plugins
+ZSH_THEME="simple"
 
-  export FZF_BASE=/usr/bin/fzf
-fi
+plugins=(
+  git
+  gitfast
+  last-working-dir
+  zsh-syntax-highlighting
+  history-substring-search
+  colored-man-pages
+  docker docker-compose
+  fzf
+)
+
+export FZF_BASE=/usr/bin/fzf
 
 # Actually load Oh-My-Zsh
 source "${ZSH}/oh-my-zsh.sh"
-unalias rm # No interactive rm by default (brought by plugins/common-aliases)
+# unalias rm # No interactive rm by default (brought by plugins/common-aliases)
 
 # Prevent Homebrew from reporting - https://github.com/Homebrew/brew/blob/master/share/doc/homebrew/Analytics.md
 export HOMEBREW_NO_ANALYTICS=1
@@ -86,4 +84,3 @@ fi
 if [ -d "$HOME/apps/emsdk" ]; then
   export EMSDK_QUIET=1; source "/home/marcos/apps/emsdk/emsdk_env.sh"
 fi
-

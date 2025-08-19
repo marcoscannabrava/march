@@ -6,15 +6,15 @@ else echo "utils.sh not found."; exit 1; fi
 
 INSTALL_PACKAGES=true
 
-while getopt "h,help,n,no-packages" option; do
+while getopts "h,help,n,no-packages" option; do
     case $option in
-        n|no-packages)
+        n|-no-packages)
             log_purple "Skipping package installation."
             echo "Skipping package installation. You can run this script again later to install packages."
             INSTALL_PACKAGES=false
-            exit 0
             ;;
-        h|help|*)
+        h|-help|*)
+            echo ">>>" $option
             echo "Usage: $0 [options]"
             echo "Options:"
             echo "  -h, --help           Show this help message"
@@ -59,6 +59,9 @@ if [ $INSTALL_PACKAGES = true ]; then
     log_purple "installing packages from pkg.list..."
     PKG_LIST="$(grep -vE '^#|^$' pkg.list | cut -d'|' -f1 | xargs)"
     sudo yay -S --needed --noconfirm $PKG_LIST
+
+    log_purple "installing zsh, oh-my-zsh, and plugins..."
+    ./install/zsh.sh
 fi
 
 

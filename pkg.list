@@ -50,6 +50,7 @@ qt5-wayland                                            | wayland support in qt5
 qt6-wayland                                            | wayland support in qt6
 
 # --------------------------------------------------- // Shell - zsh
+zsh                                                    | a very good shell
 starship                                               | customizable shell prompt written in Rust
 bat                                                    | enhanced version of cat
 eza                                                    | file lister for zsh
