@@ -67,7 +67,7 @@ fi
 log_purple "#######################################"
 log_purple "######### symlinking dotfiles #########"
 log_purple "#######################################\n"
-for file in $(find config -type f); do
+for file in $(find config etc -type f); do
     # files in config/_home are symlinked to $HOME, otherwise to $HOME/.config
     if [[ "$file" == config/_home/* ]]; then
         target="$HOME/$(basename "$file")"
@@ -102,6 +102,11 @@ for file in $(find scripts -type f); do
     ln -s "$REPO_DIR/$file" "$target"
     log_green "linked: $target"
 done
+
+log_purple "######################################"
+log_purple "######### starting services ##########"
+log_purple "######################################\n"
+sudo systemctl enable greetd.service
 
 
 

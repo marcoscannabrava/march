@@ -32,6 +32,7 @@ slurp                                                  | region select for scree
 satty                                                  | Modern Screenshot Annotation
 cliphist                                               | clipboard manager
 wl-clip-persist                                        | Keep Wayland clipboard even after programs close (avoids crashes)
+greetd                                                 | greeter daemon auto login
 
 # --------------------------------------------------- // Dependencies
 pacman-contrib                                         | for system update check

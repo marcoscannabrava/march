@@ -41,7 +41,7 @@ function backup() {
     local dest="${2:-${src}.bkp}"
     if [[ -z "$src" ]]; then log_red "No source file specified for backup."; return 1; fi
 
-    mv "$src" "$dest" && \
+    sudo mv "$src" "$dest" && \
     log_green "'$src' backed up." || \
     (log_red "Failed to backup '$src'."; return 1)
 }
