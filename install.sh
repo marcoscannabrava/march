@@ -103,12 +103,6 @@ for file in $(find scripts -type f); do
     log_green "linked: $target"
 done
 
-log_purple "######################################"
-log_purple "######### starting services ##########"
-log_purple "######################################\n"
-sudo systemctl enable greetd.service
-
-
 
 log_green "##########################################"
 log_green "######### INSTALLATION COMPLETE! #########"

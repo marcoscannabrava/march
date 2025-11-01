@@ -8,7 +8,7 @@ rclone copy --copy-links --fast-list \
   --filter='- .*/**' --filter='- tmp/**' --filter='- sandbox/**' --filter='- go/**' --filter='- apps/**' \
   --filter='- node_modules/**' --filter='- __pycache__/**' --filter='- miniconda3/**' \
   --filter='- VirtualBoxVMs/**' --filter='- Downloads/**' --filter='- canvas-lms/**' \
-    $HOME backblaze:poposbkp
+    $HOME backblaze:archbkp
 
 echo "-----> Backup finished on `date +"%Y-%m-%d-%H:%M:%S"`"
 if command -v notify-send &> /dev/null
