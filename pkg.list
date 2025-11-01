@@ -2,7 +2,6 @@
 zsh                                                    | a very good shell
 
 # --------------------------------------------------- // Utilities
-keyd-git                                               | A key remapping daemon for linux
 rclone-git                                             | Sync files to and from Google Drive, S3, etc
 git-lfs                                                | Git extension for versioning large files
 keychain                                               | Manager for ssh-agent, unlock keys on login
@@ -11,4 +10,3 @@ keychain                                               | Manager for ssh-agent, 
 slack-desktop                                          | Slack Messaging App
 qbittorrent-nox                                        | Torrent Client
 dbeaver                                                | Database Client
-
