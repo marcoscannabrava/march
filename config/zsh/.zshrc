@@ -84,3 +84,5 @@ fi
 if [ -d "$HOME/apps/emsdk" ]; then
   export EMSDK_QUIET=1; source "/home/marcos/apps/emsdk/emsdk_env.sh"
 fi
+
+eval $(keychain --eval id_ed25519 --quiet)
