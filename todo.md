@@ -1,6 +1,4 @@
-- change resolution: vscode/files font too big
-- remap copilot key
-- set up compose key
+- [oh-my-zsh] plugin 'zsh-syntax-highlighting' not found
 - ssh agent: do not ask for pass - set up keychain
 - mod: splash screen, lock screen, limine screen
 - make emoji panel paste on enter
