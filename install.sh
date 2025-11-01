@@ -6,6 +6,8 @@ else echo "utils.sh not found."; exit 1; fi
 
 INSTALL_PACKAGES=true
 
+sudo chmod -R -x install
+
 while getopts "h,help,n,no-packages" option; do
     case $option in
         n|-no-packages)
@@ -67,7 +69,7 @@ fi
 log_purple "#######################################"
 log_purple "######### symlinking dotfiles #########"
 log_purple "#######################################\n"
-for file in $(find config etc -type f); do
+for file in $(find config -type f); do
     # files in config/_home are symlinked to $HOME, otherwise to $HOME/.config
     if [[ "$file" == config/_home/* ]]; then
         target="$HOME/$(basename "$file")"
