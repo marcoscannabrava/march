@@ -1,5 +1,5 @@
-- [oh-my-zsh] plugin 'zsh-syntax-highlighting' not found
 - ssh agent: do not ask for pass - set up keychain
+- app switcher
 - mod: splash screen, lock screen, limine screen
 - make emoji panel paste on enter
 
@@ -8,4 +8,4 @@
   - ?
 - set up ssh keychain, add private key: eval `ssh-agent -s` && ssh-add ~/.ssh/id_ed25519, add "AddKeysToAgent yes" in ~/.ssh/config
   - ?
-- remove bloat: typora, obsidian, 1password, hey, basecamp
+- remove bloat: typora, obsidian, 1password, hey, basecamp, dumb screensaver
