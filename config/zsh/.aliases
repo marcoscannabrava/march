@@ -37,9 +37,9 @@ alias gmb='git merge-base @'
 
 alias gnew='git checkout develop && gfa && git checkout -b'
 
-alias dotfiles='code ~/code/dotfiles'
+alias dotfiles='code ~/dotfiles'
 
-alias notes='code ~/code/notes'
+alias notes='code ~/notes'
 
 alias c='cd $(find ~/code -maxdepth 2 -type d ! -name ".*" | fzf)'
 

@@ -1,11 +1,4 @@
-- ssh agent: do not ask for pass - set up keychain
 - app switcher
 - mod: splash screen, lock screen, limine screen
-- make emoji panel paste on enter
-
-- install/add nwg-displays to menu
-  - yay -S nwg-displays
-  - ?
-- set up ssh keychain, add private key: eval `ssh-agent -s` && ssh-add ~/.ssh/id_ed25519, add "AddKeysToAgent yes" in ~/.ssh/config
-  - ?
-- remove bloat: typora, obsidian, 1password, hey, basecamp, dumb screensaver
+- merge with dotfiles repo
+- nit: make emoji panel paste on enter

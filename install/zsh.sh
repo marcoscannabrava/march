@@ -1,4 +1,5 @@
 echo "source ~/.config/zsh/.zshrc" > ~/.zshrc
+echo "source ~/.config/zsh/.aliases" >> ~/.zshrc
 
 # change user default shell
 sudo chsh -s `which zsh`

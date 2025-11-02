@@ -1,4 +1,4 @@
-{
+{ "workbench.colorTheme": "Tokyo Night",
     "keyboard.dispatch": "keyCode",
     // Editor & Theme Customizations
     "terminal.integrated.defaultProfile.linux": "zsh",
@@ -325,4 +325,5 @@
     "[c]": {
         "editor.defaultFormatter": "ms-vscode.cpptools"
     },
+    "workbench.iconTheme": "Monokai Pro (Filter Ristretto) Icons",
 }

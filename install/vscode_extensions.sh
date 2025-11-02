@@ -49,7 +49,5 @@ code --install-extension vadimcn.vscode-lldb
 code --install-extension visualstudioexptteam.intellicode-api-usage-examples
 code --install-extension visualstudioexptteam.vscodeintellicode
 code --install-extension vue.volar
-code --install-extension wholroyd.jinja
 code --install-extension yangtangwu.html-to-markdown
 code --install-extension yzhang.markdown-all-in-one
-code --install-extension zxh404.vscode-proto3

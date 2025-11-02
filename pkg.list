@@ -5,8 +5,11 @@ zsh                                                    | a very good shell
 rclone-git                                             | Sync files to and from Google Drive, S3, etc
 git-lfs                                                | Git extension for versioning large files
 keychain                                               | Manager for ssh-agent, unlock keys on login
+xxd                                                    | make a hex dump or do the reverse.
+nwg-displays                                           | Output management utility for sway and Hyprland Wayland compositors
 
 # --------------------------------------------------- // Applications
 slack-desktop                                          | Slack Messaging App
 qbittorrent-nox                                        | Torrent Client
 dbeaver                                                | Database Client
+google-chrome                                          | Web Browser
