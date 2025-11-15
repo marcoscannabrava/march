@@ -1,5 +1,7 @@
 #!/bin/bash
 
+eval omarchy/boot.sh
+
 ORIGINAL_DIR="$(pwd)"
 REPO_DIR="$(dirname "$(readlink -f "$0")")"
 
