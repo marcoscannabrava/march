@@ -1,4 +1,6 @@
-ORIGINAL_DIR=`pwd`
+#!/bin/bash
+
+ORIGINAL_DIR="$(pwd)"
 REPO_DIR="$(dirname "$(readlink -f "$0")")"
 
 if [ -f $REPO_DIR/utils.sh ]; then source $REPO_DIR/utils.sh;
