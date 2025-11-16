@@ -1,7 +1,5 @@
 #!/bin/bash
 
-eval omarchy/boot.sh
-
 ORIGINAL_DIR="$(pwd)"
 REPO_DIR="$(dirname "$(readlink -f "$0")")"
 
@@ -9,14 +7,22 @@ if [ -f $REPO_DIR/utils.sh ]; then source $REPO_DIR/utils.sh;
 else echo "utils.sh not found."; exit 1; fi
 
 INSTALL_PACKAGES=true
+INSTALL_OMARCHY=true
+SYMLINK_FILES=true
 
-sudo chmod -R -x install
-
-while getopts "h,help,n,no-packages" option; do
+while getopts "h,help,n,no-packages,o,no-omarchy,s,no-symlink" option; do
     case $option in
         n|-no-packages)
             log_purple "-no-packages: Skipping package installation...\n\n"
             INSTALL_PACKAGES=false
+            ;;
+        o|-no-omarchy)
+            log_purple "-no-omarchy: Skipping omarchy installation...\n\n"
+            INSTALL_OMARCHY=false
+            ;;
+        s|-no-symlink)
+            log_purple "-no-symlink: Skipping symlinking files...\n\n"
+            SYMLINK_FILES=false
             ;;
         h|-help|*)
             echo ">>>" $option
@@ -24,10 +30,16 @@ while getopts "h,help,n,no-packages" option; do
             echo "Options:"
             echo "  -h, --help           Show this help message"
             echo "  -n, --no-packages    Skip package installation"
+            echo "  -o, --no-omarchy    Skip omarchy installation"
+            echo "  -s, --no-symlink    Skip symlinking dotfiles"
             exit 0
             ;;
     esac
 done
+
+if [ $INSTALL_OMARCHY = true ]; then
+    eval omarchy/boot.sh
+fi
 
 if [ $INSTALL_PACKAGES = true ]; then
     log_purple "#######################################"
@@ -59,55 +71,58 @@ if [ $INSTALL_PACKAGES = true ]; then
     log_purple "######### installing packages #########"
     log_purple "#######################################\n"
     log_purple "updating package database..."
-    sudo yay -Syu
+    yay -Syu
 
     log_purple "installing packages from pkg.list..."
     PKG_LIST="$(grep -vE '^#|^$' pkg.list | cut -d'|' -f1 | xargs)"
-    sudo yay -S --needed --noconfirm $PKG_LIST
+    yay -S --needed --noconfirm $PKG_LIST
 
-    log_purple "installing zsh, oh-my-zsh, and plugins..."
-    ./install/zsh.sh
+    if ! command -v zsh &> /dev/null; then
+        log_purple "installing zsh, oh-my-zsh, and plugins..."
+        ./install/zsh.sh
+    fi
 fi
 
+if [ $SYMLINK_FILES = true ]; then
+    log_purple "#######################################"
+    log_purple "######### symlinking dotfiles #########"
+    log_purple "#######################################\n"
+    for file in $(find config -type f); do
+        # files in config/_home are symlinked to $HOME, otherwise to $HOME/.config
+        if [[ "$file" == config/_home/* ]]; then
+            target="$HOME/$(basename "$file")"
+        else
+            target="$HOME/.$file"
+        fi
+        if [ -L "$HOME/.$file" ]; then
+            log_yellow "$file already linked."
+            continue
+        fi
+        if [ -e "$target" ]; then
+            backup "$target"
+        fi
+        mkdir -p "$(dirname "$target")"
+        ln -s "$REPO_DIR/$file" "$target"
+        log_green "linked: $target"
+    done
 
-log_purple "#######################################"
-log_purple "######### symlinking dotfiles #########"
-log_purple "#######################################\n"
-for file in $(find config -type f); do
-    # files in config/_home are symlinked to $HOME, otherwise to $HOME/.config
-    if [[ "$file" == config/_home/* ]]; then
-        target="$HOME/$(basename "$file")"
-    else
-        target="$HOME/.$file"
-    fi
-    if [ -L "$HOME/.$file" ]; then
-        log_yellow "$file already linked."
-        continue
-    fi
-    if [ -e "$target" ]; then
-        backup "$target"
-    fi
-    mkdir -p "$(dirname "$target")"
-    ln -s "$REPO_DIR/$file" "$target"
-    log_green "linked: $target"
-done
-
-log_purple "######################################"
-log_purple "######### symlinking scripts #########"
-log_purple "######################################\n"
-mkdir -p "$HOME/.local/lib/march"
-for file in $(find scripts -type f); do
-    target="$HOME/.local/lib/march/$(basename "$file")"
-    if [ -L "$target" ]; then
-        log_yellow "$file already linked."
-        continue
-    fi
-    if [ -e "$target" ]; then
-        backup "$target"
-    fi
-    ln -s "$REPO_DIR/$file" "$target"
-    log_green "linked: $target"
-done
+    log_purple "######################################"
+    log_purple "######### symlinking scripts #########"
+    log_purple "######################################\n"
+    mkdir -p "$HOME/.local/lib/march"
+    for file in $(find scripts -type f); do
+        target="$HOME/.local/lib/march/$(basename "$file")"
+        if [ -L "$target" ]; then
+            log_yellow "$file already linked."
+            continue
+        fi
+        if [ -e "$target" ]; then
+            backup "$target"
+        fi
+        ln -s "$REPO_DIR/$file" "$target"
+        log_green "linked: $target"
+    done
+fi
 
 
 log_green "##########################################"

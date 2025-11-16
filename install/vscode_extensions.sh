@@ -46,8 +46,6 @@ code --install-extension tamasfe.even-better-toml
 code --install-extension tomoki1207.pdf
 code --install-extension twxs.cmake
 code --install-extension vadimcn.vscode-lldb
-code --install-extension visualstudioexptteam.intellicode-api-usage-examples
-code --install-extension visualstudioexptteam.vscodeintellicode
 code --install-extension vue.volar
 code --install-extension yangtangwu.html-to-markdown
 code --install-extension yzhang.markdown-all-in-one
