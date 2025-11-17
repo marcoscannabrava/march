@@ -25,7 +25,7 @@ source "${ZSH}/oh-my-zsh.sh"
 export HOMEBREW_NO_ANALYTICS=1
 
 # Rails, Ruby, NodeJs uses the local `bin` folder to store binstubs.
-export PATH="./bin:./node_modules/.bin:${PATH}:/usr/local/sbin"
+export PATH="$HOME/.local/bin:./bin:./node_modules/.bin:${PATH}:/usr/local/sbin"
 
 # load user ~/.aliases
 [[ -f "$HOME/zsh/.aliases" ]] && source "$HOME/zsh/.aliases"
@@ -54,6 +54,13 @@ complete -o nospace -C /usr/local/bin/terraform terraform
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+# pnpm
+export PNPM_HOME="/home/marcos/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 
 # ------- END Package/Version Managers -------
 

@@ -25,6 +25,7 @@ function gcommit() {
     fi
 }
 
+# cheat sheet alias
 function @c() {
     if [ -z "$1" ]; then
         curl cht.sh/:help | less
@@ -35,11 +36,9 @@ function @c() {
 
 alias gmb='git merge-base @'
 
-alias gnew='git checkout develop && gfa && git checkout -b'
+alias dotfiles='code ~/code/dotfiles'
 
-alias dotfiles='code ~/dotfiles'
-
-alias notes='code ~/notes'
+alias notes='code ~/code/notes'
 
 alias c='cd $(find ~/code -maxdepth 2 -type d ! -name ".*" | fzf)'
 
@@ -60,6 +59,11 @@ alias rzc='code ~/code/rize'
 alias valence=~/code/valence/dev.sh
 alias vl='cd ~/code/valence/coach && valence'
 alias vlc='code ~/code/valence'
+
+# Loancrate Dev Tools
+alias loancrate=~/code/loancrate-dev/dev.sh
+alias lc='cd ~/code/loancrate-dev && loancrate'
+alias lcc='code ~/code/loancrate-dev/loancrate'
 
 # ----------------- Cryptography ----------------- #
 # encrypt / encode
