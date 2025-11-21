@@ -1,0 +1,4 @@
+include=~/.config/omarchy/current/theme/mako.ini
+
+[app-name=Clocks]
+on-notify=exec mpv ~/.local/share/sounds/default-alarm.mp3

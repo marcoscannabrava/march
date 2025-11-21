@@ -122,6 +122,23 @@ if [ $SYMLINK_FILES = true ]; then
         ln -s "$REPO_DIR/$file" "$target"
         log_green "linked: $target"
     done
+
+    log_purple "######################################"
+    log_purple "######### symlinking sounds ##########"
+    log_purple "######################################\n"
+    mkdir -p "$HOME/.local/share/sounds"
+    for file in $(find sounds -type f); do
+        target="$HOME/.local/share/sounds/$(basename "$file")"
+        if [ -L "$target" ]; then
+            log_yellow "$file already linked."
+            continue
+        fi
+        if [ -e "$target" ]; then
+            backup "$target"
+        fi
+        ln -s "$REPO_DIR/$file" "$target"
+        log_green "linked: $target"
+    done
 fi
 
 
