@@ -7,6 +7,8 @@ git-lfs                                                | Git extension for versi
 keychain                                               | Manager for ssh-agent, unlock keys on login
 xxd                                                    | make a hex dump or do the reverse.
 nwg-displays                                           | Output management utility for sway and Hyprland Wayland compositors
+gnome-clocks                                           | Simple clock application for GNOME
+elephant-windows                                       | Provider to list open windows for Walker App Launcher
 
 # --------------------------------------------------- // Applications
 slack-desktop                                          | Slack Messaging App
