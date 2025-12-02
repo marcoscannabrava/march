@@ -3,7 +3,7 @@
 
 echo "-----> Running backup script on $(date +"%Y-%m-%d-%H:%M:%S")"
 # other options for running it manually: --dry-run --progress
-rclone copy --copy-links --fast-list \
+rclone copy --copy-links --fast-list --use-mmap \
   --filter="+ code" --filter="+ Documents" --filter="+ Pictures" --filter="+ Videos" --filter="+ Music" \
   --filter='- .*/**' --filter='- tmp/**' --filter='- sandbox/**' --filter='- go/**' --filter='- apps/**' \
   --filter='- node_modules/**' --filter='- __pycache__/**' --filter='- miniconda3/**' \
