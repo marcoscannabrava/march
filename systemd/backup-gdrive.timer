@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Google Drive backup weekly
+Requires=backup-gdrive.service
+
+[Timer]
+# Run weekly on Sunday at 3am
+OnCalendar=Sun 03:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

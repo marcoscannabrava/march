@@ -14,4 +14,4 @@ install/vscode_extensions.sh
 ```
 
 # TODO
-- fix backup crons to run on Arch that does not come with crontab as a base package
+- fix backup crons to symlink scripts to static folder — currently depends on the location of this repo

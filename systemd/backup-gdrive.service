@@ -1,0 +1,15 @@
+[Unit]
+Description=Backup Google Drive to Backblaze
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=marcos
+Environment="HOME=/home/marcos"
+ExecStart=/home/marcos/code/march/scripts/backup_gdrive
+StandardOutput=append:/var/log/backup.log
+StandardError=append:/var/log/backup.log
+
+[Install]
+WantedBy=multi-user.target

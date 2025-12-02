@@ -1,19 +1,19 @@
 #!/bin/bash
 # Backup script: syncs $HOME dir with Backblaze
 
-echo "-----> Running backup script on `date +"%Y-%m-%d-%H:%M:%S"`"
+echo "-----> Running backup script on $(date +"%Y-%m-%d-%H:%M:%S")"
 # other options for running it manually: --dry-run --progress
 rclone copy --copy-links --fast-list \
   --filter="+ code" --filter="+ Documents" --filter="+ Pictures" --filter="+ Videos" --filter="+ Music" \
   --filter='- .*/**' --filter='- tmp/**' --filter='- sandbox/**' --filter='- go/**' --filter='- apps/**' \
   --filter='- node_modules/**' --filter='- __pycache__/**' --filter='- miniconda3/**' \
   --filter='- VirtualBoxVMs/**' --filter='- Downloads/**' --filter='- canvas-lms/**' \
-    $HOME backblaze:archbkp
+    $HOME backblaze:poposbkp
 
-echo "-----> Backup finished on `date +"%Y-%m-%d-%H:%M:%S"`"
+echo "-----> Backup finished on $(date +"%Y-%m-%d-%H:%M:%S")"
 if command -v notify-send &> /dev/null
 then
-    notify-send "Backup finished" `date +"%Y-%m-%d-%H:%M:%S"`
+    notify-send "Backup finished" "$(date +"%Y-%m-%d-%H:%M:%S")"
 fi
 
 
