@@ -1,4 +1,0 @@
-- app switcher
-- mod: splash screen, lock screen, limine screen
-- merge with dotfiles repo
-- nit: make emoji panel paste on enter

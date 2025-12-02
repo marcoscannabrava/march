@@ -1,3 +1,5 @@
+#!/bin/bash
+
 CUR_DIR="$(dirname "$(readlink -f "$0")")"
 PARENT_DIR="$(dirname "$CUR_DIR")"
 chmod +x "$PARENT_DIR/scripts/backup"

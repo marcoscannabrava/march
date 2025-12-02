@@ -6,32 +6,44 @@ REPO_DIR="$(dirname "$(readlink -f "$0")")"
 if [ -f $REPO_DIR/utils.sh ]; then source $REPO_DIR/utils.sh;
 else echo "utils.sh not found."; exit 1; fi
 
-INSTALL_PACKAGES=true
-INSTALL_OMARCHY=true
-SYMLINK_FILES=true
+INSTALL_OMARCHY=false
+INSTALL_PACKAGES=false
+SYMLINK_FILES=false
+INSTALL_WALLPAPERS_AND_SPLASHSCREEN=false
+INSTALL_KEYMAP=false
 
-while getopts "h,help,n,no-packages,o,no-omarchy,s,no-symlink" option; do
+while getopts "poswkh:" option; do
     case $option in
-        n|-no-packages)
-            log_purple "-no-packages: Skipping package installation...\n\n"
-            INSTALL_PACKAGES=false
+        p)
+            log_purple "-packages: package installation...\n\n"
+            INSTALL_PACKAGES=true
             ;;
-        o|-no-omarchy)
-            log_purple "-no-omarchy: Skipping omarchy installation...\n\n"
-            INSTALL_OMARCHY=false
+        o)
+            log_purple "-omarchy: omarchy installation...\n\n"
+            INSTALL_OMARCHY=true
             ;;
-        s|-no-symlink)
-            log_purple "-no-symlink: Skipping symlinking files...\n\n"
-            SYMLINK_FILES=false
+        s)
+            log_purple "-symlink: symlinking files...\n\n"
+            SYMLINK_FILES=true
             ;;
-        h|-help|*)
+        w)
+            log_purple "-wallpapers: wallpapers and splashscreen installation...\n\n"
+            INSTALL_WALLPAPERS_AND_SPLASHSCREEN=true
+            ;;
+        k)
+            log_purple "-keymap: keymap configuration...\n\n"
+            INSTALL_KEYMAP=true
+            ;;
+        h|*)
             echo ">>>" $option
             echo "Usage: $0 [options]"
             echo "Options:"
             echo "  -h, --help           Show this help message"
-            echo "  -n, --no-packages    Skip package installation"
-            echo "  -o, --no-omarchy    Skip omarchy installation"
-            echo "  -s, --no-symlink    Skip symlinking dotfiles"
+            echo "  -p, --packages       Install packages"
+            echo "  -o, --omarchy        Install Omarchy"
+            echo "  -s, --symlink        Symlink dotfiles"
+            echo "  -w, --wallpapers     Install wallpapers and splashscreen"
+            echo "  -k, --keymap         Install keymap configuration"
             exit 0
             ;;
     esac
@@ -39,6 +51,7 @@ done
 
 if [ $INSTALL_OMARCHY = true ]; then
     eval omarchy/boot.sh
+    exit 0
 fi
 
 if [ $INSTALL_PACKAGES = true ]; then
@@ -141,6 +154,20 @@ if [ $SYMLINK_FILES = true ]; then
     done
 fi
 
+if [ $INSTALL_WALLPAPERS_AND_SPLASHSCREEN = true ]; then
+    log_purple "#################################################"
+    log_purple "##### installing wallpapers and splash screen ###"
+    log_purple "#################################################\n"
+    eval install/wallpapers.sh
+    eval install/splashscreen.sh
+fi
+
+if [ $INSTALL_KEYMAP = true ]; then
+    log_purple "##########################################"
+    log_purple "######### configuring keymap #############"
+    log_purple "##########################################\n"
+    eval install/keymap.sh
+fi
 
 log_green "##########################################"
 log_green "######### INSTALLATION COMPLETE! #########"
