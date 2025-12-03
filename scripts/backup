@@ -2,13 +2,13 @@
 # Backup script: syncs $HOME dir with Backblaze
 
 echo "-----> Running backup script on $(date +"%Y-%m-%d-%H:%M:%S")"
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+FILTER_FILE="$SCRIPT_DIR/backup_directories.txt"
+
 # other options for running it manually: --dry-run --progress
-rclone copy --copy-links --fast-list --use-mmap \
-  --filter="+ code" --filter="+ Documents" --filter="+ Pictures" --filter="+ Videos" --filter="+ Music" \
-  --filter='- .*/**' --filter='- tmp/**' --filter='- sandbox/**' --filter='- go/**' --filter='- apps/**' \
-  --filter='- node_modules/**' --filter='- __pycache__/**' --filter='- miniconda3/**' \
-  --filter='- VirtualBoxVMs/**' --filter='- Downloads/**' --filter='- canvas-lms/**' \
-    $HOME backblaze:poposbkp
+rclone copy --copy-links --transfers 8 --max-buffer-memory 1G --filter-from="$FILTER_FILE" $HOME backblaze:poposbkp
 
 echo "-----> Backup finished on $(date +"%Y-%m-%d-%H:%M:%S")"
 if command -v notify-send &> /dev/null

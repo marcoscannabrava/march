@@ -21,10 +21,11 @@ if crontab -l 2>/dev/null | grep -q "/etc/cron.weekly/backup"; then
 fi
 
 # Install systemd service and timer units
-sudo cp "$PARENT_DIR/systemd/backup.service" /etc/systemd/system/
-sudo cp "$PARENT_DIR/systemd/backup.timer" /etc/systemd/system/
-sudo cp "$PARENT_DIR/systemd/backup-gdrive.service" /etc/systemd/system/
-sudo cp "$PARENT_DIR/systemd/backup-gdrive.timer" /etc/systemd/system/
+find "$PARENT_DIR/systemd" -type f -exec sudo ln -sf {} /etc/systemd/system/ \;
+
+# Install backup scripts to user's local bin
+sudo mkdir -p "/usr/local/lib/march"
+find "$PARENT_DIR/scripts" -type f -exec sudo ln -sf {} "/usr/local/lib/march" \;
 
 # Reload systemd daemon
 sudo systemctl daemon-reload

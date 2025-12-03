@@ -1,0 +1,19 @@
+# Include these directories
++ code
++ Documents
++ Pictures
++ Videos
++ Music
+
+# Exclude patterns
+- .*/**
+- tmp/**
+- sandbox/**
+- go/**
+- apps/**
+- node_modules/**
+- __pycache__/**
+- miniconda3/**
+- VirtualBoxVMs/**
+- Downloads/**
+- canvas-lms/**

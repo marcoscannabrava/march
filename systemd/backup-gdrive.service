@@ -6,10 +6,10 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 User=marcos
-Environment="HOME=/home/marcos"
-ExecStart=/home/marcos/code/march/scripts/backup_gdrive
+ExecStart=/usr/local/lib/march/backup_gdrive
 StandardOutput=append:/var/log/backup.log
 StandardError=append:/var/log/backup.log
+MemoryMax=12G
 
 [Install]
 WantedBy=multi-user.target
