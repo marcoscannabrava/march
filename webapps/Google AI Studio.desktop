@@ -2,7 +2,7 @@
 Version=1.0
 Name=Google AI Studio
 Comment=Google AI Studio
-Exec=omarchy-launch-webapp https://aistudio.google.com/prompts/new_chat
+Exec=omarchy-launch-webapp https://aistudio.google.com
 Terminal=false
 Type=Application
 Icon=$HOME/.local/share/applications/icons/Google AI Studio.png
