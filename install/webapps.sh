@@ -13,21 +13,16 @@ echo "Installing webapps..."
 mkdir -p "$TARGET_DIR"
 mkdir -p "$ICON_DIR"
 
-# Copy all .desktop files and replace $HOME with actual path
-for desktop_file in "$WEBAPP_DIR"/*.desktop; do
-    if [ -f "$desktop_file" ]; then
-        filename=$(basename "$desktop_file")
+# Copy all files from webapps directory
+for file in "$WEBAPP_DIR"/*; do
+    if [ -f "$file" ]; then
+        filename=$(basename "$file")
         echo "  Installing $filename"
-        sed "s|\$HOME|$HOME|g" "$desktop_file" > "$TARGET_DIR/$filename"
-    fi
-done
-
-# Copy all icon files (png, jpg, svg, etc.)
-for icon_file in "$WEBAPP_DIR"/*.{png,jpg,jpeg,svg,ico}; do
-    if [ -f "$icon_file" ]; then
-        filename=$(basename "$icon_file")
-        echo "  Installing icon $filename"
-        cp "$icon_file" "$ICON_DIR/$filename"
+        if [[ "$filename" == *.desktop ]]; then
+            sed "s|\$HOME|$HOME|g" "$file" > "$TARGET_DIR/$filename"
+        elif [[ "$filename" =~ \.(png|jpg|jpeg|svg|ico)$ ]]; then
+            cp "$file" "$ICON_DIR/$filename"
+        fi
     fi
 done
 
