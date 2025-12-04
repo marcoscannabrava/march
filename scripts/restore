@@ -1,2 +1,2 @@
 # restore $HOME from backblaze backup
-rclone copy --fast-list --update --progress backblaze:poposbkp /home/marcos/
+rclone copy --fast-list --update --progress backblaze:poposbkp $HOME

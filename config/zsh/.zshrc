@@ -39,10 +39,10 @@ export BUNDLER_EDITOR="code"
 export PATH=$PATH:/usr/local/go/bin
 
 # devcontainer - needs to be installed in vscode
-export PATH=$PATH:/home/marcos/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers/cli-bin
+export PATH=$PATH:$HOME/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers/cli-bin
 
 # opencode
-export PATH=/home/marcos/.opencode/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
 
 # Autocomplete for Terraform
 autoload -U +X bashcompinit && bashcompinit
@@ -56,7 +56,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 # pnpm
-export PNPM_HOME="/home/marcos/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -89,7 +89,7 @@ fi
 
 # requires installing emscripten manually in ~/apps/
 if [ -d "$HOME/apps/emsdk" ]; then
-  export EMSDK_QUIET=1; source "/home/marcos/apps/emsdk/emsdk_env.sh"
+  export EMSDK_QUIET=1; source "$HOME/apps/emsdk/emsdk_env.sh"
 fi
 
 eval $(keychain --eval id_ed25519 --quiet)

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Google AI Studio
+Comment=Google AI Studio
+Exec=omarchy-launch-webapp https://aistudio.google.com/prompts/new_chat
+Terminal=false
+Type=Application
+Icon=$HOME/.local/share/applications/icons/Google AI Studio.png
+StartupNotify=true
