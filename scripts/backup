@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FILTER_FILE="$SCRIPT_DIR/backup_directories.txt"
 
 # other options for running it manually: --dry-run --progress
-rclone copy --copy-links --transfers 8 --max-buffer-memory 1G --filter-from="$FILTER_FILE" $HOME backblaze:poposbkp
+rclone copy --copy-links --transfers 8 --max-buffer-memory 1G --filter-from="$FILTER_FILE" "$@" $HOME backblaze:poposbkp
 
 echo "-----> Backup finished on $(date +"%Y-%m-%d-%H:%M:%S")"
 if command -v notify-send &> /dev/null

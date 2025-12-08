@@ -13,5 +13,6 @@ install/backup_crons.sh
 install/vscode_extensions.sh
 ```
 
-# TODO
-- fix backup crons to symlink scripts to static folder — currently depends on the location of this repo
+# known issues
+## elephant-windows
+Because Omarchy repo has its own version of the elephant package. Upgrading system packages **might** pull a newer version of elephant plugins from AUR. This version mismatch **might** break if the Go used to compile the plugin is different from the one used to compile the main package. The solution is to manually build the plugin with the system's Go.
