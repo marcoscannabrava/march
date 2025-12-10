@@ -9,7 +9,9 @@ User=marcos
 ExecStart=/usr/local/lib/march/backup
 StandardOutput=append:/var/log/backup.log
 StandardError=append:/var/log/backup.log
-MemoryMax=12G
+MemoryHigh=10G
+MemoryMax=16G
+MemorySwapMax=16G
 
 [Install]
 WantedBy=multi-user.target
