@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# path to the file waybar reads
+STATUS_FILE="/tmp/waybar_timer.json"
+# path to a file to store the pid of the background process
+PID_FILE="/tmp/waybar_timer.pid"
+# Sound to play
+SOUND_FILE="$HOME/.local/share/sounds/default-alarm.mp3"
+
+print_json() {
+    text=$1
+    tooltip=$2
+    class=$3
+    echo "{\"text\": \"$text\", \"tooltip\": \"$tooltip\", \"class\": \"$class\"}" > "$STATUS_FILE"
+}
+
+stop_timer() {
+    if [ -f "$PID_FILE" ]; then
+        kill "$(cat "$PID_FILE")" 2>/dev/null
+        rm "$PID_FILE"
+    fi
+    print_json "" "Timer stopped" "stopped"
+    exit 0
+}
+
+start_timer() {
+    # If a timer is already running, stop it first
+    [ -f "$PID_FILE" ] && stop_timer
+
+    duration=$1
+    
+    # Simple regex to handle just minutes (e.g., 10) or minutes+suffix (e.g., 10m)
+    if [[ "$duration" =~ ^[0-9]+$ ]]; then
+        total_seconds=$(($duration * 60))
+    elif [[ "$duration" =~ ^([0-9]+)m$ ]]; then
+        total_seconds=$((${BASH_REMATCH[1]} * 60))
+    elif [[ "$duration" =~ ^([0-9]+)s$ ]]; then
+        total_seconds=${BASH_REMATCH[1]}
+    else
+        notify-send "Timer Error" "Invalid format. Use numbers for minutes (e.g. 10) or 10s for seconds."
+        exit 1
+    fi
+
+    # Fork the countdown loop to background
+    (
+        echo $BASHPID > "$PID_FILE"
+        for ((i=total_seconds; i>0; i--)); do
+            minutes=$((i / 60))
+            seconds=$((i % 60))
+            # Format nicely as MM:SS
+            formatted=$(printf "%02d:%02d" $minutes $seconds)
+            print_json "󱎫 $formatted" "Time remaining: $formatted" "running"
+            sleep 1
+        done
+
+        # Timer finished
+        print_json "󱎫 00:00" "Timer Finished" "critical"
+        notify-send -u critical -i clock "Timer Finished" "Your $duration timer is up!"
+        paplay "$SOUND_FILE" 2>/dev/null
+        
+        # Wait a few seconds showing 00:00 then hide
+        sleep 5
+        print_json "" "Timer Idle" "stopped"
+        rm "$PID_FILE"
+    ) &
+}
+
+# Logic to handle arguments
+case "$1" in
+    stop)
+        stop_timer
+        ;;
+    *)
+        if [ -z "$1" ]; then
+            echo "Usage: $0 <minutes> OR $0 <number>m OR $0 <number>s OR $0 stop"
+            exit 1
+        fi
+        start_timer "$1"
+        ;;
+esac

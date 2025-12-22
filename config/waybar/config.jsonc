@@ -5,7 +5,7 @@
   "spacing": 0,
   "height": 32,
   "modules-left": ["custom/omarchy", "hyprland/workspaces"],
-  "modules-center": ["clock", "custom/update", "custom/screenrecording-indicator"],
+  "modules-center": ["clock", "custom/timer", "custom/update", "custom/screenrecording-indicator"],
   "modules-right": [
     "group/tray-expander",
     "bluetooth",
@@ -59,6 +59,14 @@
     "format-alt": "{:L%d %B W%V %Y}",
     "tooltip": false,
     "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
+  },
+  "custom/timer": {
+    "exec": "cat /tmp/waybar_timer.json 2> /dev/null",
+    "return-type": "json",
+    "interval": 1,
+    "format": "{}",
+    "on-click": "/usr/local/lib/march/timer stop",
+    "tooltip": true
   },
   "network": {
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],

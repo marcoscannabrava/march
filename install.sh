@@ -44,6 +44,8 @@ while getopts "poswkh:" option; do
             echo "  -s, --symlink        Symlink dotfiles"
             echo "  -w, --wallpapers     Install wallpapers and splashscreen"
             echo "  -k, --keymap         Install keymap configuration"
+            echo ""
+            echo "Example: $0 -pswk # installs packages, symlinks files, wallpapers, and keymap"
             exit 0
             ;;
     esac
@@ -122,9 +124,9 @@ if [ $SYMLINK_FILES = true ]; then
     log_purple "######################################"
     log_purple "######### symlinking scripts #########"
     log_purple "######################################\n"
-    mkdir -p "$HOME/.local/lib/march"
+    mkdir -p "/usr/local/lib/march"
     for file in $(find scripts -type f); do
-        target="$HOME/.local/lib/march/$(basename "$file")"
+        target="/usr/local/lib/march/$(basename "$file")"
         if [ -L "$target" ]; then
             log_yellow "$file already linked."
             continue
@@ -132,9 +134,12 @@ if [ $SYMLINK_FILES = true ]; then
         if [ -e "$target" ]; then
             backup "$target"
         fi
-        ln -s "$REPO_DIR/$file" "$target"
+        sudo ln -s "$REPO_DIR/$file" "$target"
         log_green "linked: $target"
     done
+
+    # symlink timer to ~/.local/bin so it's in PATH
+    sudo ln -s "$REPO_DIR/scripts/timer" "$HOME/.local/bin/timer"
 
     log_purple "######################################"
     log_purple "######### symlinking sounds ##########"
@@ -160,6 +165,7 @@ if [ $INSTALL_WALLPAPERS_AND_SPLASHSCREEN = true ]; then
     log_purple "#################################################\n"
     eval install/wallpapers.sh
     eval install/splashscreen.sh
+    eval install/branding.sh
 fi
 
 if [ $INSTALL_KEYMAP = true ]; then
@@ -167,6 +173,37 @@ if [ $INSTALL_KEYMAP = true ]; then
     log_purple "######### configuring keymap #############"
     log_purple "##########################################\n"
     eval install/keymap.sh
+fi
+
+read -p "Do you want to install VSCode extensions? (y/n): " install_vscode
+if [[ "$install_vscode" =~ ^[Yy]$ ]]; then
+    log_purple "##########################################"
+    log_purple "######## installing VSCode extensions ####"
+    log_purple "##########################################\n"
+    eval install/vscode_extensions.sh
+fi
+
+read -p "Do you want to install webapps? (y/n): " install_webapps
+if [[ "$install_webapps" =~ ^[Yy]$ ]]; then
+    log_purple "##########################################"
+    log_purple "######### installing webapps #############"
+    log_purple "##########################################\n"
+    eval install/webapps.sh
+fi
+
+read -p "Do you want to install the backup crons? Be sure to update the scripts. (y/n): " install_crons
+read -p "Crontab or systemd? Abort? (c/s/a): " cron_type
+if [[ "$install_crons" =~ ^[Yy]$ ]]; then
+    log_purple "##########################################"
+    log_purple "######### installing backup crons ########"
+    log_purple "##########################################\n"
+    if [[ "$cron_type" =~ ^[Cc]$ ]]; then
+        eval install/backup_crons.sh
+    elif [[ "$cron_type" =~ ^[Ss]$ ]]; then
+        eval install/backup_systemd.sh
+    else
+        log_yellow "Skipping backup cron installation."
+    fi
 fi
 
 log_green "##########################################"

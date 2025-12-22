@@ -1,4 +1,7 @@
-# dotfiles for a very minimal arch install
+# dotfiles for a very nice (m)arch
+
+> thanks Omarchy for all the quality of life improvements
+
 ```sh
 # this install omarchy base
 ./install.sh -o
@@ -6,11 +9,15 @@
 # this install customizations
 ./install.sh -pswk
 
-# backup crons
-install/backup_crons.sh
+```
 
-# vscode extensions
-install/vscode_extensions.sh
+# cool stuff
+
+## timer
+```sh
+# run to start a timer that shows up on waybar!
+timer 5m
+timer 30s
 ```
 
 # known issues
