@@ -47,17 +47,11 @@ alias duf=duf-fn
 
 alias sudomine="sudo chown -R $(whoami):$(whoami)"
 
-# Rize Dev Tools
 alias rize=~/code/rize/dev.sh
 alias rz='cd ~/code/rize && rize'
-alias rzc='code ~/code/rize'
+function rize-code() { code "$HOME/code/rize/$1"; }
+alias rzc=rize-code
 
-# Valence Dev Tools
-alias valence=~/code/valence/dev.sh
-alias vl='cd ~/code/valence/coach && valence'
-alias vlc='code ~/code/valence'
-
-# Loancrate Dev Tools
 alias loancrate=~/code/loancrate-dev/dev.sh
 alias lc='cd ~/code/loancrate-dev && loancrate'
 alias lcc='code ~/code/loancrate-dev/loancrate'
