@@ -8,7 +8,7 @@ alias gitaliases='less ~/.oh-my-zsh/plugins/git/README.md'
 alias aliases='vim ~/.aliases'
 
 # Override oh-my-zsh git plugin gfa alias to fetch all and rebase current branch
-alias gfa='git fetch --all --tags --prune && git rebase'
+alias gfa='git fetch --all --tags --prune && git rebase; git checkout "$(git symbolic-ref refs/remotes/origin/HEAD | sed "s|^refs/remotes/origin/||")" && git rebase && git checkout -'
 
 # gcof alias to use checkout with fzf 
 # TODO: instead of an alias, tab completion of the git checkout should call fzf
