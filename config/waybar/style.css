@@ -28,6 +28,7 @@
 
 #workspaces button.active * {
   color: lightcoral;
+  font-size: 16px;
 }
 
 #workspaces button.empty {
