@@ -6,6 +6,8 @@ STATUS_FILE="/tmp/waybar_timer.json"
 PID_FILE="/tmp/waybar_timer.pid"
 # Sound to play
 SOUND_FILE="$HOME/.local/share/sounds/default-alarm.mp3"
+# Store custom message
+MESSAGE_FILE="/tmp/waybar_timer_message.txt"
 
 print_json() {
     text=$1
@@ -28,6 +30,10 @@ start_timer() {
     [ -f "$PID_FILE" ] && stop_timer
 
     duration=$1
+    message="${2:-Your $duration timer is up!}"
+    
+    # Store the message for the background process
+    echo "$message" > "$MESSAGE_FILE"
     
     # Simple regex to handle just minutes (e.g., 10) or minutes+suffix (e.g., 10m)
     if [[ "$duration" =~ ^[0-9]+$ ]]; then
@@ -55,13 +61,14 @@ start_timer() {
 
         # Timer finished
         print_json "󱎫 00:00" "Timer Finished" "critical"
-        notify-send -u critical -i clock "Timer Finished" "Your $duration timer is up!"
+        stored_message=$(cat "$MESSAGE_FILE" 2>/dev/null || echo "$duration is up!")
+        notify-send -u critical -t 0 -i clock "Timer Finished" "$stored_message"
         paplay "$SOUND_FILE" 2>/dev/null
         
         # Wait a few seconds showing 00:00 then hide
         sleep 5
         print_json "" "Timer Idle" "stopped"
-        rm "$PID_FILE"
+        rm -f "$PID_FILE" "$MESSAGE_FILE"
     ) &
 }
 
@@ -72,9 +79,12 @@ case "$1" in
         ;;
     *)
         if [ -z "$1" ]; then
-            echo "Usage: $0 <minutes> OR $0 <number>m OR $0 <number>s OR $0 stop"
+            echo "Usage: $0 <duration> [message]"
+            echo "  duration: minutes (e.g. 10), or with suffix (e.g. 10m, 30s)"
+            echo "  message:  optional custom notification message"
+            echo "  $0 stop   stop the running timer"
             exit 1
         fi
-        start_timer "$1"
+        start_timer "$1" "$2"
         ;;
 esac
