@@ -63,7 +63,7 @@ start_timer() {
         print_json "󱎫 00:00" "Timer Finished" "critical"
         stored_message=$(cat "$MESSAGE_FILE" 2>/dev/null || echo "$duration is up!")
         notify-send -u critical -t 0 -i clock "Timer Finished" "$stored_message"
-        paplay "$SOUND_FILE" 2>/dev/null
+        paplay --volume=65536 "$SOUND_FILE" 2>/dev/null
         
         # Wait a few seconds showing 00:00 then hide
         sleep 5
