@@ -17,8 +17,8 @@ alias gcof='git checkout $(git branch | fzf)'
 
 # e.g. git commits the parsed name of the current branch "marcoscannabrava/something/ticketcode" -> "something / ticketcode"
 function gcommit() {
-    if [[ $(current_branch) == "marcos"* || $(current_branch) == "mc"* ]]; then
-        g c "$(current_branch | sed -E 's,(marcoscannabrava/|marcos/|mc/)?([^/]*)/(.*),\2 / \3,g' | sed -e 's,-, ,g')"
+    if [[ $(git_current_branch) == "marcos"* || $(git_current_branch) == "mc"* ]]; then
+        g c "$(git_current_branch | sed -E 's,(marcoscannabrava/|marcos/|mc/)?([^/]*)/(.*),\2 / \3,g' | sed -e 's,-, ,g')"
     fi
 }
 
