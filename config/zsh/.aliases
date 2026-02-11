@@ -18,7 +18,7 @@ alias gcof='git checkout $(git branch | fzf)'
 # e.g. git commits the parsed name of the current branch "marcoscannabrava/something/ticketcode" -> "something / ticketcode"
 function gcommit() {
     if [[ $(git_current_branch) == "marcos"* || $(git_current_branch) == "mc"* ]]; then
-        g c "$(git_current_branch | sed -E 's,(marcoscannabrava/|marcos/|mc/)?([^/]*)/(.*),\2 / \3,g' | sed -e 's,-, ,g')"
+        g c "$(git_current_branch | sed -E 's,(marcoscannabrava/|marcos/|mc/)?([^/]*)/(.*),\2: \3,g' | sed -e 's,[-_], ,g')"
     fi
 }
 
@@ -41,7 +41,7 @@ alias c='cd $(find ~/code -maxdepth 2 -type d ! -name ".*" | fzf)'
 
 # override common-aliases plugin duf alias: list all file sorted by size
 function duf-fn() {
-    du -cha -d 1 $@ | sort -hr
+    du -cha -d 1 "$@" | sort -hr
 }
 alias duf=duf-fn
 
@@ -129,14 +129,14 @@ function @l() {
     if [[ $(curl -s localhost:8080/health | jq -r '.status') != "ok" ]]; then
         llm-serve
     fi
-    llm $@
+    llm "$@"
 }
 
 # Ask LLM about a shell command and append it to history — buggy, we need to press enter to see the command in history
 # this requires creating the cmd template
 # `llm -s 'reply with the terminal command only, no extra information nor formatting' --save cmd`
 function @cmd() {
-    local output=`llm -t cmd $@`
+    local output=$(llm -t cmd "$@")
     echo ": $(date +%s):0;$output" >> ~/.zsh_history
     echo $output
 }
