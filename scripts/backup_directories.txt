@@ -1,12 +1,12 @@
 # Include these directories
++ .config
++ .claude
++ .codex
 + code
 + Documents
-+ Pictures
-+ Videos
 + Music
 
 # Exclude patterns
-- .*/**
 - tmp/**
 - sandbox/**
 - go/**

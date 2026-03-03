@@ -9,16 +9,7 @@ chmod +x "$PARENT_DIR/scripts/backup_gdrive"
 
 # Create log file
 sudo touch /var/log/backup.log
-sudo chown marcos:marcos /var/log/backup.log
-
-# Remove old cron setup if it exists
-sudo rm -f /etc/cron.weekly/backup
-sudo rm -f /etc/cron.weekly/backup_gdrive
-sudo rm -f /var/log/cron.backup.log
-# Remove user crontab if it matches our backup cron
-if crontab -l 2>/dev/null | grep -q "/etc/cron.weekly/backup"; then
-    crontab -r 2>/dev/null || true
-fi
+sudo chown $USER:$USER /var/log/backup.log
 
 # Install systemd service and timer units
 find "$PARENT_DIR/systemd" -type f -exec sudo ln -sf {} /etc/systemd/system/ \;

@@ -3,7 +3,7 @@
 
 echo "-----> Running Google Drive backup script on $(date +"%Y-%m-%d-%H:%M:%S")"
 
-rclone copy --drive-chunk-size 64M --fast-list --transfers 20 --ignore-checksum --update google-drive:/ b2:gdrivebkp
+rclone copy --drive-chunk-size 64M --fast-list --transfers 20 --ignore-checksum --update "$@" google-drive:/ b2:gdrivebkp
 
 echo "-----> Google Drive Backup finished on $(date +"%Y-%m-%d-%H:%M:%S")"
 if command -v notify-send &> /dev/null
