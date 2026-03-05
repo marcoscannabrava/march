@@ -3,17 +3,49 @@
 
 echo "-----> Running backup script on $(date +"%Y-%m-%d-%H:%M:%S")"
 
-# Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-FILTER_FILE="$SCRIPT_DIR/backup_directories.txt"
+# Directories to backup (each synced in parallel)
+DIRS=(".config" ".claude" ".codex" "code" "Documents" "Music")
 
-# other options for running it manually: --dry-run --progress
-rclone copy --copy-links --transfers 8 --max-buffer-memory 1G --filter-from="$FILTER_FILE" "$@" $HOME backblaze:poposbkp
+# Common exclude patterns
+EXCLUDES=(
+    "--exclude=tmp/**"
+    "--exclude=sandbox/**"
+    "--exclude=go/**"
+    "--exclude=apps/**"
+    "--exclude=node_modules/**"
+    "--exclude=__pycache__/**"
+    "--exclude=miniconda3/**"
+    "--exclude=VirtualBoxVMs/**"
+    "--exclude=Downloads/**"
+    "--exclude=canvas-lms/**"
+)
+
+# Sync each directory in a separate process
+PIDS=()
+for DIR in "${DIRS[@]}"; do
+    echo "-----> Starting backup for: $DIR"
+    rclone copy --copy-links --transfers 8 --max-buffer-memory 1G "${EXCLUDES[@]}" "$@" "$HOME/$DIR" "backblaze:poposbkp/$DIR" &
+    PIDS+=($!)
+done
+
+# Wait for all processes to complete
+FAILED=0
+for PID in "${PIDS[@]}"; do
+    wait $PID
+    STATUS=$?
+    if [ $STATUS -ne 0 ]; then
+        FAILED=1
+    fi
+done
 
 echo "-----> Backup finished on $(date +"%Y-%m-%d-%H:%M:%S")"
 if command -v notify-send &> /dev/null
 then
-    notify-send "Backup finished" "$(date +"%Y-%m-%d-%H:%M:%S")"
+    if [ $FAILED -eq 1 ]; then
+        notify-send "Backup completed with errors" "$(date +"%Y-%m-%d-%H:%M:%S")"
+    else
+        notify-send "Backup finished" "$(date +"%Y-%m-%d-%H:%M:%S")"
+    fi
 fi
 
 
