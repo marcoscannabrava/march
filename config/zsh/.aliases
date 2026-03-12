@@ -5,7 +5,7 @@ alias python=python3
 
 # Show git aliases from oh-my-zsh git plugin
 alias gitaliases='less ~/.oh-my-zsh/plugins/git/README.md'
-alias aliases='vim ~/.aliases'
+alias aliases='nvim ~/.config/zsh/.aliases'
 
 # Override oh-my-zsh git plugin gfa alias to fetch all and rebase current branch
 alias gfa='git fetch --all --tags --prune && git rebase; git checkout "$(git symbolic-ref refs/remotes/origin/HEAD | sed "s|^refs/remotes/origin/||")" && git rebase && git checkout -'
@@ -22,7 +22,6 @@ function gcommit() {
     fi
 }
 
-# cheat sheet alias
 function @c() {
     if [ -z "$1" ]; then
         curl cht.sh/:help | less
@@ -52,9 +51,6 @@ alias rz='cd ~/code/rize && rize'
 function rize-code() { code "$HOME/code/rize/$1"; }
 alias rzc=rize-code
 
-alias loancrate=~/code/loancrate-dev/dev.sh
-alias lc='cd ~/code/loancrate-dev && loancrate'
-alias lcc='code ~/code/loancrate-dev/loancrate'
 
 # ----------------- Cryptography ----------------- #
 # encrypt / encode
@@ -104,6 +100,8 @@ function mdless() {
 #               ------- Useful LLM Aliases -----------                                  #
 #               --------------------------------------                                  #
 
+alias claude='claude --dangerously-skip-permissions'
+
 alias llmfast='llm -m gemini/gemini-2.5-flash-preview-05-20'
 
 alias lmreviewdiff='gd main...@ | llm -t code-review '
@@ -139,6 +137,22 @@ function @cmd() {
     local output=$(llm -t cmd "$@")
     echo ": $(date +%s):0;$output" >> ~/.zsh_history
     echo $output
+}
+
+# nw = New Worktree, create a new git worktree for the given branch name
+function nw() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: ga [branch name]"
+    exit 1
+  fi
+
+  local branch="$1"
+  local base="$(basename "$PWD")"
+  local path="../${base}--${branch}"
+
+  git worktree add -b "$branch" "$path"
+  mise trust "$path"
+  cd "$path"
 }
 
 #               -----------------------------------                                     #
