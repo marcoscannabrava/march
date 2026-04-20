@@ -96,49 +96,6 @@ function mdless() {
 }
 
 
-#               --------------------------------------                                  #
-#               ------- Useful LLM Aliases -----------                                  #
-#               --------------------------------------                                  #
-
-alias claude='claude --dangerously-skip-permissions'
-
-alias llmfast='llm -m gemini/gemini-2.5-flash-preview-05-20'
-
-alias lmreviewdiff='gd main...@ | llm -t code-review '
-
-export DEFAULT_LLAMAFILE_MODEL="DeepSeek-Coder-V2-Lite-Instruct-Q4_K_M.gguf"
-function llm-serve {
-    model=${1:-$DEFAULT_LLAMAFILE_MODEL}
-    echo "Starting LLM server with model $model"
-    if docker inspect $model > /dev/null 2>&1; then
-        docker start $model
-    else
-        docker run -d --runtime nvidia --gpus all -v ~/.cache/huggingface/hub:/models -p 8080:8080 --name $model ghcr.io/ggerganov/llama.cpp:server -ngl 99 -m "/models/$model"
-    fi
-    llm models default llamafile
-    until [[ $(curl -s localhost:8080/health | jq -r '.status') == "ok" ]]; do
-        sleep 1
-    done
-    echo "LLM server is ready"
-}
-
-# Start server if not started and pick between the models
-function @l() {
-    if [[ $(curl -s localhost:8080/health | jq -r '.status') != "ok" ]]; then
-        llm-serve
-    fi
-    llm "$@"
-}
-
-# Ask LLM about a shell command and append it to history — buggy, we need to press enter to see the command in history
-# this requires creating the cmd template
-# `llm -s 'reply with the terminal command only, no extra information nor formatting' --save cmd`
-function @cmd() {
-    local output=$(llm -t cmd "$@")
-    echo ": $(date +%s):0;$output" >> ~/.zsh_history
-    echo $output
-}
-
 # nw = New Worktree, create a new git worktree for the given branch name
 function nw() {
   if [[ -z "$1" ]]; then
@@ -154,10 +111,6 @@ function nw() {
   mise trust "$path"
   cd "$path"
 }
-
-#               -----------------------------------                                     #
-#               ------- END LLM Aliases -----------                                     #
-#               -----------------------------------                                     #
 
 #               ------- Useful Docker Aliases --------                                  #
 #     https://gist.githubusercontent.com/jgrodziski/9ed4a17709baad10dbcd4530b60dfcbb/   #
