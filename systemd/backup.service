@@ -6,12 +6,14 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 User=marcos
+EnvironmentFile=-/etc/march/backup.env
 ExecStart=/usr/local/lib/march/backup
-StandardOutput=append:/var/log/backup.log
-StandardError=append:/var/log/backup.log
-MemoryHigh=10G
-MemoryMax=16G
-MemorySwapMax=16G
+Nice=10
+IOSchedulingClass=idle
+TimeoutStartSec=12h
+MemoryHigh=2G
+MemoryMax=4G
+MemorySwapMax=2G
 
 [Install]
 WantedBy=multi-user.target

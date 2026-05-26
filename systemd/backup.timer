@@ -1,11 +1,12 @@
 [Unit]
 Description=Run backup on Monday, Wednesday, and Friday at 2pm
-Requires=backup.service
 
 [Timer]
 # Run at 2pm on Monday, Wednesday, and Friday
 OnCalendar=Mon,Wed,Fri 14:00
+Unit=backup.service
 Persistent=true
+RandomizedDelaySec=30m
 
 [Install]
 WantedBy=timers.target

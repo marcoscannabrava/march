@@ -1,105 +1,70 @@
-# Backup System Migration: Cron → Systemd Timers
+# Backup System Migration: Cron To Systemd Timers
 
-This document explains the migration from cron-based backup scheduling to systemd timers.
+This document explains the migration from cron-based backup scheduling to
+systemd timers.
 
 ## What Changed
 
-### Old System (Cron)
-- **User crontab:** Mon, Wed, Fri at 2:00 PM running `/etc/cron.weekly/backup`
-- **System cron:** Weekly cron.weekly running both backup scripts
-- **Logs:** `/var/log/cron.backup.log`
-- **Install script:** `install/backup_crons.sh`
+### Old System
 
-### New System (Systemd)
-- **backup.timer:** Mon, Wed, Fri at 2:00 PM → `backup.service`
-- **backup-gdrive.timer:** Sunday at 3:00 AM → `backup-gdrive.service`
-- **Logs:** `/var/log/backup.log` + journald
-- **Install script:** `install/backup_systemd.sh`
+- User crontab ran `/etc/cron.weekly/backup` on Monday, Wednesday, and Friday.
+- System cron could run both backup scripts weekly.
+- Logs went to `/var/log/cron.backup.log`.
+- Installed hooks were symlinks into the repository.
+
+### New System
+
+- `backup.timer`: Monday, Wednesday, and Friday at 2:00 PM.
+- `backup-gdrive.timer`: Sunday at 3:00 AM.
+- Logs are in journald.
+- Units are copied to `/etc/systemd/system/`.
+- Scripts are copied to `/usr/local/lib/march/`.
+
+The copy-based install prevents units from disappearing if the repository is
+moved, renamed, or deleted after installation.
 
 ## Migration Steps
 
-### 1. Install the new systemd-based backup system
 ```bash
 ./install/backup_systemd.sh
 ```
 
-This script will:
-- Remove old cron setup (symlinks in `/etc/cron.weekly/` and user crontab)
-- Install systemd service and timer units to `/etc/systemd/system/`
-- Enable and start the timers
-- Create log file at `/var/log/backup.log`
+The installer will:
 
-### 2. Verify the installation
+- Remove old cron hooks from `/etc/cron.weekly/` and the user crontab.
+- Replace old broken symlinked systemd units with regular files.
+- Copy backup scripts to `/usr/local/lib/march/`.
+- Reload systemd.
+- Enable and start `backup.timer` and `backup-gdrive.timer`.
+- Warn if expected rclone remotes are missing.
+
+## Verify
+
 ```bash
-# Check if timers are active
-systemctl list-timers
-
-# Check timer status
 systemctl status backup.timer
 systemctl status backup-gdrive.timer
-
-# View when next backup is scheduled
-systemctl list-timers backup.timer backup-gdrive.timer
+systemctl list-timers --all backup.timer backup-gdrive.timer
+journalctl -u backup.service -n 50
 ```
 
-### 3. Monitor logs
+## Resource Controls
+
+The services load optional overrides from `/etc/march/backup.env`:
+
 ```bash
-# View systemd journal logs
-journalctl -u backup.service -f
-
-# Or view the log file
-tail -f /var/log/backup.log
+MARCH_BACKUP_JOBS=1
+MARCH_RCLONE_TRANSFERS=2
+MARCH_RCLONE_CHECKERS=4
+MARCH_RCLONE_BUFFER_SIZE=16M
+MARCH_RCLONE_MAX_BUFFER_MEMORY=256M
+MARCH_BACKUP_COPY_LINKS=0
+MARCH_GDRIVE_RCLONE_TRANSFERS=4
+MARCH_GDRIVE_RCLONE_CHECKERS=8
+MARCH_GDRIVE_CHUNK_SIZE=32M
 ```
 
-## Advantages of Systemd Timers
-
-1. **Better Logging**
-   - Integrated with journald for centralized logging
-   - Use `journalctl` to view logs with timestamps and context
-   - Still writes to `/var/log/backup.log` for compatibility
-
-2. **Dependency Management**
-   - Services wait for network to be online before running
-   - Explicit dependency declarations between timers and services
-
-3. **Persistent Timers**
-   - If the system is off during a scheduled time, the job runs when the system comes back online
-   - Prevents missed backups due to system being turned off
-
-4. **Better Status Reporting**
-   - Easy to check if timers are enabled and when they last ran
-   - Clear service status with `systemctl status`
-
-5. **More Flexible Scheduling**
-   - OnCalendar syntax is more expressive than cron
-   - Easier to understand and modify
-
-6. **No Email Dependencies**
-   - Cron relies on mail system for notifications
-   - Systemd uses native notification mechanisms
-
-## Files Created
-
-```
-systemd/
-├── backup.service              # Service unit for home directory backup
-├── backup.timer                # Timer for Mon/Wed/Fri at 2pm
-├── backup-gdrive.service       # Service unit for Google Drive backup
-├── backup-gdrive.timer         # Timer for Sunday at 3am
-└── README.md                   # Detailed documentation
-
-install/
-└── backup_systemd.sh           # Installation script (executable)
-```
-
-## Files Deprecated
-
-```
-cron → cron.deprecated
-install/backup_crons.sh → install/backup_crons.sh.deprecated
-```
-
-The original files have been renamed with `.deprecated` extension for reference.
+The home and Google Drive backup scripts share `/tmp/march-backup.lock`, so they
+do not overlap. Google Drive backups continue to use `--fast-list`.
 
 ## Common Commands
 
@@ -108,52 +73,23 @@ The original files have been renamed with `.deprecated` extension for reference.
 sudo systemctl start backup.service
 sudo systemctl start backup-gdrive.service
 
-# Stop/disable timers
-sudo systemctl stop backup.timer
-sudo systemctl disable backup.timer
+# Stop and disable timers
+sudo systemctl disable --now backup.timer backup-gdrive.timer
 
 # Re-enable timers
-sudo systemctl enable --now backup.timer
-
-# View logs for a specific service
-journalctl -u backup.service -n 50
+sudo systemctl enable --now backup.timer backup-gdrive.timer
 
 # Check timer configuration
 systemctl cat backup.timer
-
-# Edit timer schedule
-sudo systemctl edit --full backup.timer
-# Then reload: sudo systemctl daemon-reload
 ```
 
-## Troubleshooting
-
-If backups aren't running:
-1. Check if timers are enabled: `systemctl is-enabled backup.timer`
-2. Check timer status: `systemctl status backup.timer`
-3. View service logs: `journalctl -u backup.service -n 50`
-4. Test script manually: `/home/marcos/code/march/scripts/backup`
-
-## Rollback (if needed)
-
-If you need to revert to the old cron system:
+## Rollback
 
 ```bash
-# Disable and stop systemd timers
-sudo systemctl stop backup.timer backup-gdrive.timer
-sudo systemctl disable backup.timer backup-gdrive.timer
-
-# Remove systemd units
-sudo rm /etc/systemd/system/backup.{service,timer}
-sudo rm /etc/systemd/system/backup-gdrive.{service,timer}
+sudo systemctl disable --now backup.timer backup-gdrive.timer
+sudo rm -f /etc/systemd/system/backup.{service,timer}
+sudo rm -f /etc/systemd/system/backup-gdrive.{service,timer}
 sudo systemctl daemon-reload
 
-# Restore old cron setup (after removing .deprecated extension)
-mv install/backup_crons.sh.deprecated install/backup_crons.sh
-mv cron.deprecated cron
 ./install/backup_crons.sh
 ```
-
-## Questions?
-
-See `systemd/README.md` for more detailed documentation and examples.

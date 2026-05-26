@@ -6,10 +6,14 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 User=marcos
+EnvironmentFile=-/etc/march/backup.env
 ExecStart=/usr/local/lib/march/backup_gdrive
-StandardOutput=append:/var/log/backup.log
-StandardError=append:/var/log/backup.log
-MemoryMax=12G
+Nice=10
+IOSchedulingClass=idle
+TimeoutStartSec=24h
+MemoryHigh=3G
+MemoryMax=6G
+MemorySwapMax=3G
 
 [Install]
 WantedBy=multi-user.target

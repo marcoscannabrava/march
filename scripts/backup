@@ -1,9 +1,31 @@
 #!/bin/bash
 # Backup script: syncs $HOME dir with Backblaze
 
-echo "-----> Running backup script on $(date +"%Y-%m-%d-%H:%M:%S")"
+set -Eeuo pipefail
 
-# Directories to backup (each synced in parallel)
+timestamp() {
+    date +"%Y-%m-%d-%H:%M:%S"
+}
+
+notify_backup() {
+    local title="$1"
+    local message="$2"
+
+    if command -v notify-send &> /dev/null && [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+        notify-send "$title" "$message" || true
+    fi
+}
+
+LOCK_FILE="${MARCH_BACKUP_LOCK_FILE:-/tmp/march-backup.lock}"
+exec 9>"$LOCK_FILE"
+if ! flock -n 9; then
+    echo "-----> Another backup is already running; exiting on $(timestamp)"
+    exit 75
+fi
+
+echo "-----> Running backup script on $(timestamp)"
+
+# Directories to backup
 DIRS=(".config" ".claude" ".codex" "code" "Documents" "Music")
 
 # Common exclude patterns
@@ -20,33 +42,69 @@ EXCLUDES=(
     "--exclude=canvas-lms/**"
 )
 
-# Sync each directory in a separate process
-PIDS=()
+BACKUP_JOBS="${MARCH_BACKUP_JOBS:-1}"
+RCLONE_TRANSFERS="${MARCH_RCLONE_TRANSFERS:-2}"
+RCLONE_CHECKERS="${MARCH_RCLONE_CHECKERS:-4}"
+RCLONE_BUFFER_SIZE="${MARCH_RCLONE_BUFFER_SIZE:-16M}"
+RCLONE_MAX_BUFFER_MEMORY="${MARCH_RCLONE_MAX_BUFFER_MEMORY:-256M}"
+COPY_LINKS="${MARCH_BACKUP_COPY_LINKS:-0}"
+
+if ! [[ "$BACKUP_JOBS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "MARCH_BACKUP_JOBS must be a positive integer" >&2
+    exit 2
+fi
+
+RCLONE_OPTIONS=(
+    --transfers "$RCLONE_TRANSFERS"
+    --checkers "$RCLONE_CHECKERS"
+    --buffer-size "$RCLONE_BUFFER_SIZE"
+    --max-buffer-memory "$RCLONE_MAX_BUFFER_MEMORY"
+)
+
+if [ "$COPY_LINKS" = "1" ] || [ "$COPY_LINKS" = "true" ]; then
+    RCLONE_OPTIONS+=(--copy-links)
+fi
+
+run_backup() {
+    local dir="$1"
+    shift
+    echo "-----> Starting backup for: $dir"
+    rclone copy "${RCLONE_OPTIONS[@]}" "${EXCLUDES[@]}" "$@" "$HOME/$dir" "backblaze:poposbkp/$dir"
+}
+
+FAILED=0
+RUNNING=0
 for DIR in "${DIRS[@]}"; do
-    echo "-----> Starting backup for: $DIR"
-    rclone copy --copy-links --transfers 8 --max-buffer-memory 1G "${EXCLUDES[@]}" "$@" "$HOME/$DIR" "backblaze:poposbkp/$DIR" &
-    PIDS+=($!)
+    if [ ! -e "$HOME/$DIR" ]; then
+        echo "-----> Skipping missing path: $HOME/$DIR"
+        continue
+    fi
+
+    run_backup "$DIR" "$@" &
+    RUNNING=$((RUNNING + 1))
+
+    if [ "$RUNNING" -ge "$BACKUP_JOBS" ]; then
+        if ! wait -n; then
+            FAILED=1
+        fi
+        RUNNING=$((RUNNING - 1))
+    fi
 done
 
-# Wait for all processes to complete
-FAILED=0
-for PID in "${PIDS[@]}"; do
-    wait $PID
-    STATUS=$?
-    if [ $STATUS -ne 0 ]; then
+while [ "$RUNNING" -gt 0 ]; do
+    if ! wait -n; then
         FAILED=1
     fi
+    RUNNING=$((RUNNING - 1))
 done
 
-echo "-----> Backup finished on $(date +"%Y-%m-%d-%H:%M:%S")"
-if command -v notify-send &> /dev/null
-then
-    if [ $FAILED -eq 1 ]; then
-        notify-send "Backup completed with errors" "$(date +"%Y-%m-%d-%H:%M:%S")"
-    else
-        notify-send "Backup finished" "$(date +"%Y-%m-%d-%H:%M:%S")"
-    fi
+echo "-----> Backup finished on $(timestamp)"
+if [ "$FAILED" -eq 1 ]; then
+    notify_backup "Backup completed with errors" "$(timestamp)"
+    exit 1
 fi
+
+notify_backup "Backup finished" "$(timestamp)"
 
 
 # Command to Check backup size

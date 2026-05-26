@@ -109,7 +109,7 @@ if [ $SYMLINK_FILES = true ]; then
         else
             target="$HOME/.$file"
         fi
-        if [ -L "$HOME/.$file" ]; then
+        if [ -L "$target" ]; then
             log_yellow "$file already linked."
             continue
         fi
@@ -124,8 +124,13 @@ if [ $SYMLINK_FILES = true ]; then
     log_purple "######################################"
     log_purple "######### symlinking scripts #########"
     log_purple "######################################\n"
-    mkdir -p "/usr/local/lib/march"
+    sudo install -d -m 0755 "/usr/local/lib/march"
     for file in $(find scripts -type f); do
+        script_name="$(basename "$file")"
+        if [[ "$script_name" =~ ^(backup|backup_gdrive|restore)$ ]]; then
+            log_yellow "$file is installed by install/backup_systemd.sh."
+            continue
+        fi
         target="/usr/local/lib/march/$(basename "$file")"
         if [ -L "$target" ]; then
             log_yellow "$file already linked."
@@ -139,7 +144,8 @@ if [ $SYMLINK_FILES = true ]; then
     done
 
     # symlink timer to ~/.local/bin so it's in PATH
-    sudo ln -s "$REPO_DIR/scripts/timer" "$HOME/.local/bin/timer"
+    mkdir -p "$HOME/.local/bin"
+    ln -sfn "$REPO_DIR/scripts/timer" "$HOME/.local/bin/timer"
 
     log_purple "######################################"
     log_purple "######### symlinking sounds ##########"

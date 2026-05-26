@@ -1,12 +1,44 @@
 #!/bin/bash
 # Backup script: copy Google Drive to Backblaze
 
-echo "-----> Running Google Drive backup script on $(date +"%Y-%m-%d-%H:%M:%S")"
+set -Eeuo pipefail
 
-rclone copy --drive-chunk-size 64M --fast-list --transfers 20 --ignore-checksum --update "$@" google-drive:/ b2:gdrivebkp
+timestamp() {
+    date +"%Y-%m-%d-%H:%M:%S"
+}
 
-echo "-----> Google Drive Backup finished on $(date +"%Y-%m-%d-%H:%M:%S")"
-if command -v notify-send &> /dev/null
-then
-    notify-send "Backup finished" "$(date +"%Y-%m-%d-%H:%M:%S")"
+notify_backup() {
+    local title="$1"
+    local message="$2"
+
+    if command -v notify-send &> /dev/null && [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+        notify-send "$title" "$message" || true
+    fi
+}
+
+LOCK_FILE="${MARCH_BACKUP_LOCK_FILE:-/tmp/march-backup.lock}"
+exec 9>"$LOCK_FILE"
+if ! flock -n 9; then
+    echo "-----> Another backup is already running; exiting on $(timestamp)"
+    exit 75
 fi
+
+RCLONE_TRANSFERS="${MARCH_GDRIVE_RCLONE_TRANSFERS:-4}"
+RCLONE_CHECKERS="${MARCH_GDRIVE_RCLONE_CHECKERS:-8}"
+DRIVE_CHUNK_SIZE="${MARCH_GDRIVE_CHUNK_SIZE:-32M}"
+
+echo "-----> Running Google Drive backup script on $(timestamp)"
+
+rclone copy \
+    --drive-chunk-size "$DRIVE_CHUNK_SIZE" \
+    --fast-list \
+    --transfers "$RCLONE_TRANSFERS" \
+    --checkers "$RCLONE_CHECKERS" \
+    --ignore-checksum \
+    --update \
+    "$@" \
+    google-drive:/ \
+    b2:gdrivebkp
+
+echo "-----> Google Drive Backup finished on $(timestamp)"
+notify_backup "Backup finished" "$(timestamp)"
