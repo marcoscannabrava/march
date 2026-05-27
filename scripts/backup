@@ -1,5 +1,5 @@
 #!/bin/bash
-# Backup script: syncs $HOME dir with Backblaze
+# Backup script: syncs selected $HOME folders with Backblaze
 
 set -Eeuo pipefail
 
@@ -26,7 +26,7 @@ fi
 echo "-----> Running backup script on $(timestamp)"
 
 # Directories to backup
-DIRS=(".config" ".claude" ".codex" "code" "Documents" "Music")
+DIRS=("code" "Documents" "Pictures" "Music" "Videos")
 
 # Common exclude patterns
 EXCLUDES=(
@@ -40,13 +40,15 @@ EXCLUDES=(
     "--exclude=VirtualBoxVMs/**"
     "--exclude=Downloads/**"
     "--exclude=canvas-lms/**"
+    "--exclude=.git/**"
+    "--exclude=.ruff_cache/**"
 )
 
 BACKUP_JOBS="${MARCH_BACKUP_JOBS:-1}"
-RCLONE_TRANSFERS="${MARCH_RCLONE_TRANSFERS:-2}"
+RCLONE_TRANSFERS="${MARCH_RCLONE_TRANSFERS:-4}"
 RCLONE_CHECKERS="${MARCH_RCLONE_CHECKERS:-4}"
-RCLONE_BUFFER_SIZE="${MARCH_RCLONE_BUFFER_SIZE:-16M}"
-RCLONE_MAX_BUFFER_MEMORY="${MARCH_RCLONE_MAX_BUFFER_MEMORY:-256M}"
+RCLONE_BUFFER_SIZE="${MARCH_RCLONE_BUFFER_SIZE:-128M}"
+RCLONE_MAX_BUFFER_MEMORY="${MARCH_RCLONE_MAX_BUFFER_MEMORY:-512M}"
 COPY_LINKS="${MARCH_BACKUP_COPY_LINKS:-0}"
 
 if ! [[ "$BACKUP_JOBS" =~ ^[1-9][0-9]*$ ]]; then
