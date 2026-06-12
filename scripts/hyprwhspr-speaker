@@ -1,0 +1,29 @@
+#!/bin/bash
+# Switch hyprwhspr capture between mic and speaker-monitor (one-off use).
+# Usage: hyprwhspr-speaker on|off|toggle
+set -euo pipefail
+
+STATE="${XDG_RUNTIME_DIR:-/tmp}/hyprwhspr-speaker.prevsource"
+MON="$(pactl get-default-sink).monitor"
+
+speaker_on() {
+  pactl get-default-source > "$STATE"
+  pactl set-default-source "$MON"
+  notify-send "hyprwhspr" "Capturing speaker output: $MON" 2>/dev/null || true
+}
+
+speaker_off() {
+  if [ -f "$STATE" ]; then
+    pactl set-default-source "$(cat "$STATE")" || true
+    rm -f "$STATE"
+  fi
+  notify-send "hyprwhspr" "Back to default mic source" 2>/dev/null || true
+}
+
+case "${1:-toggle}" in
+  on)  speaker_on ;;
+  off) speaker_off ;;
+  toggle)
+    if [ "$(pactl get-default-source)" = "$MON" ]; then speaker_off; else speaker_on; fi ;;
+  *) echo "Usage: $0 on|off|toggle" >&2; exit 1 ;;
+esac
