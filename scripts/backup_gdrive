@@ -16,7 +16,7 @@ notify_backup() {
     fi
 }
 
-LOCK_FILE="${MARCH_BACKUP_LOCK_FILE:-/tmp/march-backup.lock}"
+LOCK_FILE="${MARCH_BACKUP_LOCK_FILE:-/tmp/march-backup-gdrive.lock}"
 exec 9>"$LOCK_FILE"
 if ! flock -n 9; then
     echo "-----> Another backup is already running; exiting on $(timestamp)"
