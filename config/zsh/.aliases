@@ -55,7 +55,7 @@ alias rzc=rize-code
 # ----------------- Cryptography ----------------- #
 # encrypt / encode
 function enc() {
-    echo "$@" | openssl enc -kfile ~/code/m4s/infra/m4sdev_id_rsa -aes-256-ctr -pbkdf2 -a
+    openssl enc -kfile ~/code/m4s/infra/m4sdev_id_rsa -aes-256-ctr -pbkdf2 -a -
 }
 
 # decrypt / decode
