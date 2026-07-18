@@ -120,7 +120,14 @@ function dc-fn {
 }
 
 alias dc=dc-fn
-alias dps="docker ps"
+function dps() {
+  if [[ "$1" == "--short" ]]; then
+    shift
+    docker ps --format 'table {{.Names}}\t{{.Image}}' "$@"
+  else
+    docker ps "$@"
+  fi
+}
 
 #               ------- END Docker Aliases --------                                  #
 
@@ -142,7 +149,7 @@ function resize_image() {
 
 # Resize and convert Videos to mp4 - e.g. resize_video inputfile.mkv
 function resize_video() {
-  ffmpeg -i $1 -vf "scale=iw/1.2:-1" -vcodec libx265 -crf 30 "${1%.*}_resized.mp4"
+  ffmpeg -i $1 -vf "scale=iw/1.2:-2" -vcodec libx265 -crf 30 "${1%.*}_resized.mp4"
 }
 
 function convert_webm_to_mp4() {
