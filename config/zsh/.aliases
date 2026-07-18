@@ -120,7 +120,7 @@ function dc-fn {
 }
 
 alias dc=dc-fn
-function dps() {
+function dps-fn() {
   if [[ "$1" == "--short" ]]; then
     shift
     docker ps --format 'table {{.Names}}\t{{.Image}}' "$@"
@@ -130,6 +130,7 @@ function dps() {
 }
 
 #               ------- END Docker Aliases --------                                  #
+alias dps=dps-fn
 
 
 # ------- Misc Functions -------
