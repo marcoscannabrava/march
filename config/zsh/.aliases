@@ -87,7 +87,7 @@ function web_archive() {
 }
 # Convert HTML to Markdown
 function html-md() {
-    pandoc -s -f html -t markdown --wrap=none $1
+    pandoc -f html-native_divs-native_spans -t gfm --wrap=none "$1"
 }
 
 # View pretty Markdown in the terminal — hack that converts it to man pages format (groff)
