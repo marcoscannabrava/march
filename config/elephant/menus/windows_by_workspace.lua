@@ -59,6 +59,139 @@ local function shell_quote(value)
   return "'" .. tostring(value):gsub("'", "'\\''") .. "'"
 end
 
+-- Hyprland reports a window's class, which is only accidentally a valid icon
+-- name: "slack" and "Alacritty" happen to match, but VS Code's class is "code"
+-- while its icon is "vscode". Rebuild the class -> icon mapping from the
+-- installed desktop files, the way elephant's built-in windows provider does.
+local function desktop_dirs()
+  local home = os.getenv("HOME") or ""
+
+  local data_home = os.getenv("XDG_DATA_HOME")
+  if data_home == nil or data_home == "" then
+    data_home = home .. "/.local/share"
+  end
+
+  local data_dirs = os.getenv("XDG_DATA_DIRS")
+  if data_dirs == nil or data_dirs == "" then
+    data_dirs = "/usr/local/share:/usr/share"
+  end
+
+  local dirs = {data_home .. "/applications"}
+  for dir in data_dirs:gmatch("[^:]+") do
+    table.insert(dirs, dir .. "/applications")
+  end
+  table.insert(dirs, data_home .. "/flatpak/exports/share/applications")
+  table.insert(dirs, "/var/lib/flatpak/exports/share/applications")
+
+  return dirs
+end
+
+local function build_icon_index()
+  local index = {by_wmclass = {}, by_basename = {}, by_host = {}}
+
+  local globs = {}
+  for _, dir in ipairs(desktop_dirs()) do
+    -- glob stays outside the quotes so the shell still expands it
+    table.insert(globs, shell_quote(dir) .. "/*.desktop")
+  end
+
+  local handle = io.popen("grep -sH -E '^(Icon|StartupWMClass|Exec)=' " ..
+    table.concat(globs, " ") .. " 2>/dev/null")
+  if not handle then
+    return index
+  end
+
+  local files = {}
+  local order = {}
+
+  for line in handle:lines() do
+    local path, key, value = line:match("^(.-):([%w]+)=(.*)$")
+    if path and value ~= "" then
+      local file = files[path]
+      if not file then
+        file = {wmclasses = {}}
+        files[path] = file
+        table.insert(order, path)
+      end
+
+      -- keep the first Icon=/Exec= only: desktop actions repeat both keys, and
+      -- the [Desktop Entry] group always comes first
+      if key == "Icon" then
+        file.icon = file.icon or value
+      elseif key == "Exec" then
+        file.exec = file.exec or value
+      elseif key == "StartupWMClass" then
+        table.insert(file.wmclasses, value)
+      end
+    end
+  end
+
+  handle:close()
+
+  for _, path in ipairs(order) do
+    local file = files[path]
+    if file.icon then
+      for _, class in ipairs(file.wmclasses) do
+        index.by_wmclass[class] = index.by_wmclass[class] or file.icon
+        local lowered = class:lower()
+        index.by_wmclass[lowered] = index.by_wmclass[lowered] or file.icon
+      end
+
+      local basename = path:match("([^/]+)%.desktop$")
+      if basename then
+        basename = basename:lower()
+        index.by_basename[basename] = index.by_basename[basename] or file.icon
+      end
+
+      -- web apps launch as `browser --app=<url>` and carry no StartupWMClass,
+      -- so key them by the url host instead
+      if file.exec then
+        local host = file.exec:match("https?://([^/%s\"']+)")
+        if host then
+          index.by_host[host] = index.by_host[host] or file.icon
+        end
+      end
+    end
+  end
+
+  return index
+end
+
+local function normalize_icon(icon)
+  if icon:sub(1, 1) == "/" then
+    return icon
+  end
+  -- gtk resolves icon names, not filenames
+  for _, ext in ipairs({".png", ".svg", ".xpm"}) do
+    if icon:sub(-#ext):lower() == ext then
+      return icon:sub(1, #icon - #ext)
+    end
+  end
+
+  return icon
+end
+
+local function resolve_icon(index, class)
+  if class == nil or class == "" then
+    return nil
+  end
+
+  local icon = index.by_wmclass[class] or
+      index.by_wmclass[class:lower()] or
+      index.by_basename[class:lower()]
+
+  if not icon then
+    -- chrome names app windows "chrome-<host>__-Default"
+    local host = class:match("^chrome%-(.-)__")
+    if host then
+      icon = index.by_host[host]
+    end
+  end
+
+  -- unknown apps keep the previous behaviour of trying the class as-is
+  return normalize_icon(icon or class)
+end
+
 local function workspace_value(ws)
   ws = ws or {}
   if ws.id and ws.id > 0 then
@@ -82,6 +215,7 @@ end
 
 function GetEntries(query)
   local clients = get_clients()
+  local icons = build_icon_index()
 
   table.sort(clients, function(a, b)
     local akind, aid, aname = workspace_sort_key(a.workspace)
@@ -139,7 +273,7 @@ function GetEntries(query)
     table.insert(entries, {
       Text = title,
       Subtext = workspace_label(c.workspace) .. " · " .. (c.class or ""),
-      Icon = c.class,
+      Icon = resolve_icon(icons, c.class),
       Value = c.address,
       Actions = {
         activate = "hyprctl dispatch focuswindow address:%VALUE%",
