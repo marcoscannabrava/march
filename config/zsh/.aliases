@@ -44,7 +44,18 @@ function duf-fn() {
 }
 alias duf=duf-fn
 
-alias sudomine="sudo chown -R $(whoami):$(whoami)"
+function sudomine() {
+  if [[ $# -eq 0 ]]; then
+    echo "Usage: sudomine <path> [path...]"
+    return 1
+  fi
+
+  local owner_user owner_group
+  owner_user="$(id -un)"
+  owner_group="$(id -gn)"
+
+  sudo find "$@" -not \( -user "$owner_user" -group "$owner_group" \) -exec chown "$owner_user:$owner_group" {} +
+}
 
 alias rize=~/code/rize/dev.sh
 alias rz='cd ~/code/rize && rize'

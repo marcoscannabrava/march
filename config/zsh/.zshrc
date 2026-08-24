@@ -24,8 +24,8 @@ source "${ZSH}/oh-my-zsh.sh"
 # Prevent Homebrew from reporting - https://github.com/Homebrew/brew/blob/master/share/doc/homebrew/Analytics.md
 export HOMEBREW_NO_ANALYTICS=1
 
-# Rails, Ruby, NodeJs uses the local `bin` folder to store binstubs.
-export PATH="$HOME/.local/bin:./bin:./node_modules/.bin:${PATH}:/usr/local/sbin"
+# Rails, Ruby, NodeJs, Rust uses the local `bin` folder to store binstubs.
+export PATH="$HOME/.local/bin:./bin:./node_modules/.bin:${PATH}:/usr/local/sbin:$HOME/.cargo/bin"
 
 # load user ~/.aliases
 [[ -f "$HOME/zsh/.aliases" ]] && source "$HOME/zsh/.aliases"
