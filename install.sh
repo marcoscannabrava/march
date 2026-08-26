@@ -122,6 +122,26 @@ if [ $SYMLINK_FILES = true ]; then
         log_green "linked: $target"
     done
 
+    log_purple "############################################"
+    log_purple "###### symlinking claude code skills #######"
+    log_purple "############################################\n"
+    mkdir -p "$HOME/.claude/skills"
+    for dir in "$REPO_DIR"/claude/plugins/ship/skills/*/; do
+        src="${dir%/}"
+        target="$HOME/.claude/skills/$(basename "$src")"
+        if [ -L "$target" ]; then
+            if [ "$(readlink "$target")" = "$src" ]; then
+                log_yellow "$(basename "$src") already linked."
+                continue
+            fi
+            rm "$target" # stale symlink from an earlier location
+        elif [ -e "$target" ]; then
+            backup "$target"
+        fi
+        ln -s "$src" "$target"
+        log_green "linked: $target"
+    done
+
     log_purple "######################################"
     log_purple "######### symlinking scripts #########"
     log_purple "######################################\n"

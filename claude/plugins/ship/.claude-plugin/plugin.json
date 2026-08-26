@@ -1,0 +1,19 @@
+{
+  "name": "ship",
+  "description": "Product-engineering workflow skills for shipping features and complex systems: brainstorming, writing-plans, test-driven-development, systematic-debugging, prd, tech-spec, vertical-slicing, analytics-instrumentation.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Marcos Cannabrava",
+    "email": "mcannabrava@rize.education"
+  },
+  "keywords": [
+    "planning",
+    "tdd",
+    "debugging",
+    "prd",
+    "tech-spec",
+    "product",
+    "analytics",
+    "vertical-slicing"
+  ]
+}

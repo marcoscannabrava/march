@@ -1,3 +1,8 @@
 # Claude Code secrets — never version these
 config/_home/.claude/.credentials.json
 config/_home/.claude/*.credentials.json
+
+# playwright-skill installs its own deps via `npm run setup`
+claude/plugins/ship/skills/playwright-skill/node_modules/
+claude/plugins/ship/skills/playwright-skill/package-lock.json
+claude/plugins/ship/skills/playwright-skill/.temp-execution-*.js

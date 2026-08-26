@@ -1,0 +1,19 @@
+{
+  "name": "mc-skills",
+  "owner": {
+    "name": "Marcos Cannabrava",
+    "email": "mpcannabrava@gmail.com"
+  },
+  "metadata": {
+    "description": "Marcos's curated Claude Code skills for shipping product features and complex systems.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "ship",
+      "source": "./plugins/ship",
+      "description": "Product-engineering workflow skills.",
+      "strict": false
+    }
+  ]
+}

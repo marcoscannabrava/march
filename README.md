@@ -24,6 +24,9 @@
 
 `.credentials.json` holds an OAuth token and is deliberately **not** versioned (see `.gitignore`).
 
+Skills live in `claude/plugins/ship/skills/` (the `mc-skills` marketplace, plugin `ship`) and are
+symlinked into `~/.claude/skills/` by the same `-s` flag — see [claude/README.md](claude/README.md).
+
 Claude Code rewrites `settings.json` (auto-mode environment notes) and
 `installed_plugins.json` (on plugin updates) in place. Because they are symlinks into this repo,
 those writes show up as uncommitted changes — review before committing, and keep work-specific
