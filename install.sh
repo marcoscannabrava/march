@@ -218,19 +218,12 @@ if [[ "$install_webapps" =~ ^[Yy]$ ]]; then
     eval install/webapps.sh
 fi
 
-read -p "Do you want to install the backup crons? Be sure to update the scripts. (y/n): " install_crons
-read -p "Crontab or systemd? Abort? (c/s/a): " cron_type
-if [[ "$install_crons" =~ ^[Yy]$ ]]; then
+read -p "Do you want to install the backup systemd timers? Be sure to update the scripts. (y/n): " install_backups
+if [[ "$install_backups" =~ ^[Yy]$ ]]; then
     log_purple "##########################################"
-    log_purple "######### installing backup crons ########"
+    log_purple "######### installing backup timers #######"
     log_purple "##########################################\n"
-    if [[ "$cron_type" =~ ^[Cc]$ ]]; then
-        eval install/backup_crons.sh
-    elif [[ "$cron_type" =~ ^[Ss]$ ]]; then
-        eval install/backup_systemd.sh
-    else
-        log_yellow "Skipping backup cron installation."
-    fi
+    install/backup_systemd.sh
 fi
 
 log_green "##########################################"
