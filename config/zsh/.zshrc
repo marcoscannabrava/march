@@ -93,10 +93,3 @@ if [ -d "$HOME/apps/emsdk" ]; then
 fi
 
 eval $(keychain --eval id_ed25519 --quiet)
-
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/marcos/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/marcos/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/marcos/google-cloud-sdk/path.zsh.inc' ]; then . '/home/marcos/google-cloud-sdk/path.zsh.inc'; fi
