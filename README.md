@@ -3,13 +3,32 @@
 > thanks Omarchy for all the quality of life improvements
 
 ```sh
-# this install omarchy base
+# installs the omarchy base (inits the submodule first)
 ./install.sh -o
 
-# this install customizations
+# installs customizations
 ./install.sh -pswk
 
+# reports drift between this repo and the machine
+./install/doctor.sh
 ```
+
+# layout
+
+| Path | Holds |
+|---|---|
+| `install.sh`, `install/` | the bootstrap command and its sub-steps |
+| `config/` | dotfiles symlinked into `$HOME`; `config/_home/*` keeps its subpath, the rest lands in `~/.config` |
+| `claude/` | Claude Code skills marketplace — see below |
+| `scripts/` | executables linked into `/usr/local/lib/march` and `~/.local/bin` |
+| `systemd/` | backup service and timer units — see [systemd/README.md](systemd/README.md) |
+| `branding/`, `wallpapers/`, `sounds/`, `webapps/` | assets the installers copy or link |
+| `fixes/` | idempotent post-install fixes — see [fixes/README.md](fixes/README.md) |
+| `pkg.list` | packages installed by `./install.sh -p` |
+| `omarchy` | omarchy fork submodule, booted by `./install.sh -o` |
+
+VS Code settings and keybindings live in the private dotfiles repo, not here.
+`install/vscode_extensions.sh` still installs the extensions.
 
 # claude code config
 
