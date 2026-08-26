@@ -1,0 +1,3 @@
+# Claude Code secrets — never version these
+config/_home/.claude/.credentials.json
+config/_home/.claude/*.credentials.json

@@ -11,6 +11,24 @@
 
 ```
 
+# claude code config
+
+`~/.claude` config lives in `config/_home/.claude/` and is symlinked by `./install.sh -s`:
+
+| File | Notes |
+|---|---|
+| `CLAUDE.md` | global instructions; `@`-includes `pstack-models.md` |
+| `pstack-models.md` | per-role model overrides for pstack skills |
+| `settings.json` | permissions, hooks, model, enabled plugins, marketplaces |
+| `plugins/installed_plugins.json` | pinned plugin versions/SHAs |
+
+`.credentials.json` holds an OAuth token and is deliberately **not** versioned (see `.gitignore`).
+
+Claude Code rewrites `settings.json` (auto-mode environment notes) and
+`installed_plugins.json` (on plugin updates) in place. Because they are symlinks into this repo,
+those writes show up as uncommitted changes — review before committing, and keep work-specific
+`autoMode.environment` data out of this public repo.
+
 # cool stuff
 
 ## timer

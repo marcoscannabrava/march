@@ -103,9 +103,10 @@ if [ $SYMLINK_FILES = true ]; then
     log_purple "######### symlinking dotfiles #########"
     log_purple "#######################################\n"
     for file in $(find config -type f); do
-        # files in config/_home are symlinked to $HOME, otherwise to $HOME/.config
+        # files in config/_home are symlinked to $HOME preserving their subpath,
+        # otherwise to $HOME/.config
         if [[ "$file" == config/_home/* ]]; then
-            target="$HOME/$(basename "$file")"
+            target="$HOME/${file#config/_home/}"
         else
             target="$HOME/.$file"
         fi

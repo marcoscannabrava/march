@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "plugins": {
+    "rize-id@rize-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/home/marcos/.claude/plugins/cache/rize-plugins/rize-id/6d8b3270c3e8",
+        "version": "6d8b3270c3e8",
+        "installedAt": "2026-06-23T22:18:11.614Z",
+        "lastUpdated": "2026-06-23T22:18:11.614Z",
+        "gitCommitSha": "6d8b3270c3e82fec2c7ad4c8f4d31b00e0c2ae82"
+      }
+    ],
+    "rize-skills@rize-plugins": [
+      {
+        "scope": "managed",
+        "installPath": "/home/marcos/.claude/plugins/cache/rize-plugins/rize-skills/9d5175f24b7f",
+        "version": "9d5175f24b7f",
+        "installedAt": "2026-08-24T12:27:40.530Z",
+        "lastUpdated": "2026-08-24T12:27:40.530Z",
+        "gitCommitSha": "9d5175f24b7f1d9c279354c2a9d974ffbedb5cd6"
+      }
+    ],
+    "pstack@pstack-claude": [
+      {
+        "scope": "user",
+        "installPath": "/home/marcos/.claude/plugins/cache/pstack-claude/pstack/0.9.13",
+        "version": "0.9.13",
+        "installedAt": "2026-08-26T22:21:41.295Z",
+        "lastUpdated": "2026-08-26T22:21:41.295Z",
+        "gitCommitSha": "c42e947d417f9e3f10bc59d54b05be744737f4f2"
+      }
+    ]
+  }
+}

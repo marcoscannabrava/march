@@ -1,0 +1,85 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Bash(git:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(docker:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(awk:*)",
+      "Bash(sed:*)",
+      "Bash(jq:*)",
+      "Bash(gh:*)",
+      "Bash(./node_modules/.bin/:*)",
+      "Bash(docker exec:*)",
+      "Bash(claude mcp add:*)",
+      "mcp__figma-desktop__get_design_context",
+      "mcp__figma-desktop__get_screenshot",
+      "WebSearch"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "notify-send \"🔔 Claude Code\" \"$(basename $(pwd)) Claude needs your input\""
+          },
+          {
+            "type": "command",
+            "command": "paplay /usr/share/sounds/freedesktop/stereo/message-new-instant.oga"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "notify-send \"✅ Claude Code\" \"$(basename $(pwd)) Claude completed your task!\""
+          },
+          {
+            "type": "command",
+            "command": "paplay /usr/share/sounds/freedesktop/stereo/complete.oga"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "rize-id@rize-plugins": true,
+    "pstack@pstack-claude": true
+  },
+  "extraKnownMarketplaces": {
+    "rize-plugins": {
+      "source": {
+        "source": "directory",
+        "path": "/home/marcos/code/rize/claude-plugins"
+      }
+    },
+    "pstack-claude": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/michael-denyer/pstack-claude.git"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "showThinkingSummaries": true,
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "skipAutoPermissionPrompt": true
+}
