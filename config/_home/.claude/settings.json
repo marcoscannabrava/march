@@ -25,7 +25,6 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
   "hooks": {
     "Notification": [
       {
@@ -78,13 +77,14 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
-  "showThinkingSummaries": true,
-  "skipDangerousModePermissionPrompt": true,
-  "theme": "dark",
-  "skipAutoPermissionPrompt": true,
   "modelSettings": {
     "claude-fable-5": {
       "effortLevel": "xhigh"
     }
-  }
+  },
+  "showThinkingSummaries": true,
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "skipAutoPermissionPrompt": true,
+  "model": "claude-fable-5[1m]"
 }

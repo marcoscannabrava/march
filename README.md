@@ -32,6 +32,10 @@ Claude Code rewrites `settings.json` (auto-mode environment notes) and
 those writes show up as uncommitted changes — review before committing, and keep work-specific
 `autoMode.environment` data out of this public repo.
 
+# docs
+
+Notes live in `docs/`. `docs/ideas/` holds parked, unimplemented ideas — not to be acted on.
+
 # cool stuff
 
 ## timer
