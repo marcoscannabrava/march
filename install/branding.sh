@@ -1,9 +1,12 @@
 #!/bin/bash
-PARENT_DIR="$(dirname "$CUR_DIR")"
 
-mkdir -p "$HOME/.config/omarchy/branding"
-if [ -f "$HOME/.config/omarchy/branding/about.txt" ]; then
-    mv "$HOME/.config/omarchy/branding/about.txt" "$HOME/.config/omarchy/branding/about.txt.bkp"
+CUR_DIR="$(dirname "$(readlink -f "$0")")"
+PARENT_DIR="$(dirname "$CUR_DIR")"
+BRANDING_DIR="$HOME/.config/omarchy/branding"
+
+mkdir -p "$BRANDING_DIR"
+if [ -f "$BRANDING_DIR/about.txt" ] && [ ! -L "$BRANDING_DIR/about.txt" ]; then
+    mv "$BRANDING_DIR/about.txt" "$BRANDING_DIR/about.txt.bkp"
 fi
 
-ln -s "$PARENT_DIR/about.txt" "$HOME/.config/omarchy/branding/about.txt"
+ln -sfn "$PARENT_DIR/branding/about.txt" "$BRANDING_DIR/about.txt"
