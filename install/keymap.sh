@@ -1,5 +1,9 @@
-# new laptops have a dumb copilot key, make it useful
-yay -S keyd
+#!/bin/bash
+
+# Make the dumb copilot key useful.
+CUR_DIR="$(dirname "$(readlink -f "$0")")"
+
+yay -S --needed keyd
 sudo systemctl enable --now keyd
-sudo ln -s "$PWD/install/keymap.keyd.conf" "/etc/keyd/default.conf"
+sudo ln -sfn "$CUR_DIR/keymap.keyd.conf" "/etc/keyd/default.conf"
 sudo keyd reload

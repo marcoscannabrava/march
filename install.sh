@@ -1,10 +1,28 @@
 #!/bin/bash
 
-ORIGINAL_DIR="$(pwd)"
 REPO_DIR="$(dirname "$(readlink -f "$0")")"
 
 if [ -f $REPO_DIR/utils.sh ]; then source $REPO_DIR/utils.sh;
 else echo "utils.sh not found."; exit 1; fi
+
+print_logo
+cd "$REPO_DIR"
+
+usage() {
+    echo "Usage: $0 [options]"
+    echo "Options:"
+    echo "  -h, --help           Show this help message"
+    echo "  -p, --packages       Install packages"
+    echo "  -o, --omarchy        Install Omarchy"
+    echo "  -s, --symlink        Symlink dotfiles"
+    echo "  -w, --wallpapers     Install wallpapers and splashscreen"
+    echo "  -k, --keymap         Install keymap configuration"
+    echo ""
+    echo "Example: $0 -pswk # installs packages, symlinks files, wallpapers, and keymap"
+    echo ""
+    echo "Check machine drift with: install/doctor.sh"
+    exit 0
+}
 
 INSTALL_OMARCHY=false
 INSTALL_PACKAGES=false
@@ -12,7 +30,9 @@ SYMLINK_FILES=false
 INSTALL_WALLPAPERS_AND_SPLASHSCREEN=false
 INSTALL_KEYMAP=false
 
-while getopts "poswkh:" option; do
+if [ $# -eq 0 ]; then usage; fi
+
+while getopts "poswkh" option; do
     case $option in
         p)
             log_purple "-packages: package installation...\n\n"
@@ -35,24 +55,14 @@ while getopts "poswkh:" option; do
             INSTALL_KEYMAP=true
             ;;
         h|*)
-            echo ">>>" $option
-            echo "Usage: $0 [options]"
-            echo "Options:"
-            echo "  -h, --help           Show this help message"
-            echo "  -p, --packages       Install packages"
-            echo "  -o, --omarchy        Install Omarchy"
-            echo "  -s, --symlink        Symlink dotfiles"
-            echo "  -w, --wallpapers     Install wallpapers and splashscreen"
-            echo "  -k, --keymap         Install keymap configuration"
-            echo ""
-            echo "Example: $0 -pswk # installs packages, symlinks files, wallpapers, and keymap"
-            exit 0
+            usage
             ;;
     esac
 done
 
 if [ $INSTALL_OMARCHY = true ]; then
-    eval omarchy/boot.sh
+    git submodule update --init omarchy
+    bash omarchy/boot.sh
     exit 0
 fi
 
@@ -78,7 +88,7 @@ if [ $INSTALL_PACKAGES = true ]; then
         makepkg -si && \
         log_green "yay installed successfully." || \
         (log_red "failed to install yay. exiting... please install manually."; exit 1)
-        cd $ORIGINAL_DIR
+        cd "$REPO_DIR"
     fi
 
 
@@ -92,9 +102,9 @@ if [ $INSTALL_PACKAGES = true ]; then
     PKG_LIST="$(grep -vE '^#|^$' pkg.list | cut -d'|' -f1 | xargs)"
     yay -S --needed --noconfirm $PKG_LIST
 
-    if ! command -v zsh &> /dev/null; then
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
         log_purple "installing zsh, oh-my-zsh, and plugins..."
-        ./install/zsh.sh
+        install/zsh.sh
     fi
 fi
 
@@ -190,16 +200,16 @@ if [ $INSTALL_WALLPAPERS_AND_SPLASHSCREEN = true ]; then
     log_purple "#################################################"
     log_purple "##### installing wallpapers and splash screen ###"
     log_purple "#################################################\n"
-    eval install/wallpapers.sh
-    eval install/splashscreen.sh
-    eval install/branding.sh
+    install/wallpapers.sh
+    install/splashscreen.sh
+    install/branding.sh
 fi
 
 if [ $INSTALL_KEYMAP = true ]; then
     log_purple "##########################################"
     log_purple "######### configuring keymap #############"
     log_purple "##########################################\n"
-    eval install/keymap.sh
+    install/keymap.sh
 fi
 
 read -p "Do you want to install VSCode extensions? (y/n): " install_vscode
@@ -207,7 +217,7 @@ if [[ "$install_vscode" =~ ^[Yy]$ ]]; then
     log_purple "##########################################"
     log_purple "######## installing VSCode extensions ####"
     log_purple "##########################################\n"
-    eval install/vscode_extensions.sh
+    install/vscode_extensions.sh
 fi
 
 read -p "Do you want to install webapps? (y/n): " install_webapps
@@ -215,7 +225,7 @@ if [[ "$install_webapps" =~ ^[Yy]$ ]]; then
     log_purple "##########################################"
     log_purple "######### installing webapps #############"
     log_purple "##########################################\n"
-    eval install/webapps.sh
+    install/webapps.sh
 fi
 
 read -p "Do you want to install the backup systemd timers? Be sure to update the scripts. (y/n): " install_backups

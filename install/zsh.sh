@@ -1,12 +1,14 @@
-echo "source ~/.config/zsh/.zshrc" > ~/.zshrc
-echo "source ~/.config/zsh/.aliases" >> ~/.zshrc
+#!/bin/bash
 
-# install oh-my-zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# Skip when install.sh -s already linked ~/.zshrc.
+if [ ! -L "$HOME/.zshrc" ]; then
+    echo "source ~/.config/zsh/.zshrc" > ~/.zshrc
+    echo "source ~/.config/zsh/.aliases" >> ~/.zshrc
+fi
 
-# install plugins:
-# zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+RUNZSH=no KEEPZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# reload shell
-source ~/.zshrc
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+fi

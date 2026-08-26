@@ -41,9 +41,12 @@ function backup() {
     local dest="${2:-${src}.bkp}"
     if [[ -z "$src" ]]; then log_red "No source file specified for backup."; return 1; fi
 
-    sudo mv "$src" "$dest" && \
-    log_green "'$src' backed up." || \
-    (log_red "Failed to backup '$src'."; return 1)
+    if mv "$src" "$dest" 2>/dev/null || sudo mv "$src" "$dest"; then
+        log_green "'$src' backed up."
+    else
+        log_red "Failed to backup '$src'."
+        return 1
+    fi
 }
 
 function config_pacman() {
@@ -59,6 +62,7 @@ function config_pacman() {
     log_yellow "pacman already configured."
 }
 
+function print_logo() {
 cat <<EOF
                    ▂
                   ▟█▙
@@ -84,3 +88,4 @@ cat <<EOF
             Arch + Hyprland
             ===============
 EOF
+}
