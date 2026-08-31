@@ -6,3 +6,5 @@ config/_home/.claude/*.credentials.json
 claude/plugins/ship/skills/playwright-skill/node_modules/
 claude/plugins/ship/skills/playwright-skill/package-lock.json
 claude/plugins/ship/skills/playwright-skill/.temp-execution-*.js
+
+notes

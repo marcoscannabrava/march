@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "marcos.workspaces",
+  "name": "Workspaces",
+  "version": "1.0.0",
+  "author": "Marcos Cannabrava",
+  "description": "Workspace indicators for this monitor only",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Workspaces.qml"
+  },
+  "barWidget": {
+    "displayName": "Workspaces",
+    "description": "Workspace indicators for this monitor only",
+    "category": "Compositor",
+    "allowMultiple": false
+  }
+}
