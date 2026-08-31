@@ -23,8 +23,10 @@ o.bind("SUPER + SHIFT + W", "WhatsApp", { webapp = "https://web.whatsapp.com/", 
 
 -- Notifications
 o.bind_toggle("SUPER + M", "Toggle silencing notifications", "notification-silencing")
-hl.unbind("SUPER + ESCAPE") -- was: system menu
-o.bind("SUPER + ESCAPE", "Dismiss all notifications", "omarchy-shell notifications dismissAll")
+o.bind("SUPER + ALT + M", "Dismiss all notifications", "omarchy-shell notifications dismissAll")
+
+-- Power
+-- SUPER + ESCAPE keeps the Omarchy default: omarchy-menu toggle system
 
 -- App switcher
 hl.unbind("SUPER + TAB") -- was: next workspace

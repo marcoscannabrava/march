@@ -84,6 +84,9 @@ done
 echo "== keymap and branding =="
 check_link install/keymap.keyd.conf /etc/keyd/default.conf
 check_link branding/about.txt "$HOME/.config/omarchy/branding/about.txt"
+check_copy branding/logo.png /usr/share/plymouth/themes/omarchy/logo.png
+# Plymouth boots from the initramfs copy, not the one on disk.
+check_copy branding/logo.png /usr/share/plymouth/themes/omarchy/logo.png.march
 
 echo "== dangling march links =="
 for file in /usr/local/lib/march/* "$HOME/.claude/skills"/*; do
