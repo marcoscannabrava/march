@@ -59,11 +59,11 @@ Notes live in `docs/`. `docs/ideas/` holds parked, unimplemented ideas — not t
 
 ## timer
 ```sh
-# run to start a timer that shows up on waybar!
+# run to start a timer that sends a notification and plays an alarm
 timer 5m
 timer 30s
 ```
 
-# known issues
-## elephant-windows
-Because Omarchy repo has its own version of the elephant package. Upgrading system packages **might** pull a newer version of elephant plugins from AUR. This version mismatch **might** break if the Go used to compile the plugin is different from the one used to compile the main package. The solution is to manually build the plugin with the system's Go.
+The bar countdown died with waybar (Omarchy 4 replaced it with the
+Quickshell bar). To bring it back, write an omarchy shell plugin
+that reads `/tmp/waybar_timer.json`.
