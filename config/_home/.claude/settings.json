@@ -25,7 +25,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus[1m]",
   "hooks": {
     "Notification": [
       {
@@ -59,7 +59,6 @@
     ]
   },
   "enabledPlugins": {
-    "rize-id@rize-plugins": true,
     "pstack@pstack-claude": true
   },
   "extraKnownMarketplaces": {
