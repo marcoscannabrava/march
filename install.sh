@@ -8,6 +8,27 @@ else echo "utils.sh not found."; exit 1; fi
 print_logo
 cd "$REPO_DIR"
 
+# Converge target to a link to src.
+function ensure_link() {
+    local src="$1"
+    local target="$2"
+    local runner=()
+    [ "$3" = "sudo" ] && runner=(sudo)
+
+    if [ -L "$target" ] && [ "$(readlink "$target")" = "$src" ]; then
+        log_yellow "$target already linked."
+        return 0
+    fi
+
+    if [ -e "$target" ] && [ ! -L "$target" ]; then
+        backup "$target" || return 1
+    fi
+
+    "${runner[@]}" mkdir -p "$(dirname "$target")"
+    "${runner[@]}" ln -sfn "$src" "$target"
+    log_green "linked: $target"
+}
+
 usage() {
     echo "Usage: $0 [options]"
     echo "Options:"
@@ -78,17 +99,21 @@ if [ $INSTALL_PACKAGES = true ]; then
         config_pacman # from utils.sh
 
         log_purple "configuring mirrors..."
-        sudo pacman -S reflector
+        sudo pacman -S --needed --noconfirm reflector
         reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist # sort mirrors by speed
 
         log_purple "installing yay..."
-        cd $HOME
-        git clone https://aur.archlinux.org/yay-bin.git .yay-bin && \
-        cd .yay-bin && \
-        makepkg -si && \
-        log_green "yay installed successfully." || \
-        (log_red "failed to install yay. exiting... please install manually."; exit 1)
-        cd "$REPO_DIR"
+        rm -rf "$HOME/.yay-bin" # drop a clone from a crashed run
+        if ! git clone https://aur.archlinux.org/yay-bin.git "$HOME/.yay-bin"; then
+            log_red "failed to clone yay. please install it manually."
+            exit 1
+        fi
+        if ! (cd "$HOME/.yay-bin" && makepkg -si); then
+            log_red "failed to build yay. please install it manually."
+            exit 1
+        fi
+        rm -rf "$HOME/.yay-bin"
+        log_green "yay installed successfully."
     fi
 
 
@@ -102,10 +127,8 @@ if [ $INSTALL_PACKAGES = true ]; then
     PKG_LIST="$(grep -vE '^#|^$' pkg.list | cut -d'|' -f1 | xargs)"
     yay -S --needed --noconfirm $PKG_LIST
 
-    if [ ! -d "$HOME/.oh-my-zsh" ]; then
-        log_purple "installing zsh, oh-my-zsh, and plugins..."
-        install/zsh.sh
-    fi
+    log_purple "installing zsh, oh-my-zsh, and plugins..."
+    install/zsh.sh
 fi
 
 if [ $SYMLINK_FILES = true ]; then
@@ -113,43 +136,21 @@ if [ $SYMLINK_FILES = true ]; then
     log_purple "######### symlinking dotfiles #########"
     log_purple "#######################################\n"
     for file in $(find config -type f); do
-        # files in config/_home are symlinked to $HOME preserving their subpath,
-        # otherwise to $HOME/.config
+        # config/_home keeps its subpath under $HOME
         if [[ "$file" == config/_home/* ]]; then
             target="$HOME/${file#config/_home/}"
         else
             target="$HOME/.$file"
         fi
-        if [ -L "$target" ]; then
-            log_yellow "$file already linked."
-            continue
-        fi
-        if [ -e "$target" ]; then
-            backup "$target"
-        fi
-        mkdir -p "$(dirname "$target")"
-        ln -s "$REPO_DIR/$file" "$target"
-        log_green "linked: $target"
+        ensure_link "$REPO_DIR/$file" "$target"
     done
 
     log_purple "############################################"
     log_purple "###### symlinking claude code skills #######"
     log_purple "############################################\n"
-    mkdir -p "$HOME/.claude/skills"
     for dir in "$REPO_DIR"/claude/plugins/ship/skills/*/; do
         src="${dir%/}"
-        target="$HOME/.claude/skills/$(basename "$src")"
-        if [ -L "$target" ]; then
-            if [ "$(readlink "$target")" = "$src" ]; then
-                log_yellow "$(basename "$src") already linked."
-                continue
-            fi
-            rm "$target" # stale symlink from an earlier location
-        elif [ -e "$target" ]; then
-            backup "$target"
-        fi
-        ln -s "$src" "$target"
-        log_green "linked: $target"
+        ensure_link "$src" "$HOME/.claude/skills/$(basename "$src")"
     done
 
     log_purple "######################################"
@@ -162,37 +163,17 @@ if [ $SYMLINK_FILES = true ]; then
             log_yellow "$file is installed by install/backup_systemd.sh."
             continue
         fi
-        target="/usr/local/lib/march/$(basename "$file")"
-        if [ -L "$target" ]; then
-            log_yellow "$file already linked."
-            continue
-        fi
-        if [ -e "$target" ]; then
-            backup "$target"
-        fi
-        sudo ln -s "$REPO_DIR/$file" "$target"
-        log_green "linked: $target"
+        ensure_link "$REPO_DIR/$file" "/usr/local/lib/march/$script_name" sudo
     done
 
-    # symlink timer to ~/.local/bin so it's in PATH
-    mkdir -p "$HOME/.local/bin"
-    ln -sfn "$REPO_DIR/scripts/timer" "$HOME/.local/bin/timer"
+    # keep timer in PATH
+    ensure_link "$REPO_DIR/scripts/timer" "$HOME/.local/bin/timer"
 
     log_purple "######################################"
     log_purple "######### symlinking sounds ##########"
     log_purple "######################################\n"
-    mkdir -p "$HOME/.local/share/sounds"
     for file in $(find sounds -type f); do
-        target="$HOME/.local/share/sounds/$(basename "$file")"
-        if [ -L "$target" ]; then
-            log_yellow "$file already linked."
-            continue
-        fi
-        if [ -e "$target" ]; then
-            backup "$target"
-        fi
-        ln -s "$REPO_DIR/$file" "$target"
-        log_green "linked: $target"
+        ensure_link "$REPO_DIR/$file" "$HOME/.local/share/sounds/$(basename "$file")"
     done
 fi
 

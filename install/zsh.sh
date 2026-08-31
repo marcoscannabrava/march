@@ -6,7 +6,10 @@ if [ ! -L "$HOME/.zshrc" ]; then
     echo "source ~/.config/zsh/.aliases" >> ~/.zshrc
 fi
 
-RUNZSH=no KEEPZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# The installer fails when the dir exists.
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    RUNZSH=no KEEPZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
 
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
