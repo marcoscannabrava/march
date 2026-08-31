@@ -30,6 +30,12 @@
 VS Code settings and keybindings live in the private dotfiles repo, not here.
 `install/vscode_extensions.sh` still installs the extensions.
 
+## omarchy toggles
+
+`config/_home/.local/state/omarchy/toggles/screensaver-off` is an empty flag file. Omarchy only
+looks for the file, so the symlink keeps the screensaver off. `omarchy toggle screensaver` deletes
+the link to turn the screensaver back on — run `./install.sh -s` to put it back.
+
 # claude code config
 
 `~/.claude` config lives in `config/_home/.claude/` and is symlinked by `./install.sh -s`:
@@ -58,12 +64,22 @@ Notes live in `docs/`. `docs/ideas/` holds parked, unimplemented ideas — not t
 # cool stuff
 
 ## timer
+
 ```sh
-# run to start a timer that sends a notification and plays an alarm
-timer 5m
+timer 5m              # notification and alarm after 5 minutes
 timer 30s
+timer 10              # a bare number means minutes
+timer 25m "stand up"  # custom notification message
+timer stop
 ```
 
-The bar countdown died with waybar (Omarchy 4 replaced it with the
-Quickshell bar). To bring it back, write an omarchy shell plugin
-that reads `/tmp/waybar_timer.json`.
+The top bar counts down just left of the clock. `timer` writes an end
+timestamp to `~/.local/state/march/timer.json` and calls the bar widget over
+shell IPC. The widget does the ticking, so it shows the correct time even if
+the shell reloads mid-timer. It takes no space when no timer runs.
+
+The widget is an omarchy shell plugin in
+[config/omarchy/plugins/marcos.countdown](config/omarchy/plugins/marcos.countdown).
+`bar.layout.center` in `config/omarchy/shell.json` places it. Omarchy caches
+plugin QML per file path, so run `omarchy-restart-shell` after you edit the
+plugin.

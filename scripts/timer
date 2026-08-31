@@ -1,43 +1,44 @@
 #!/bin/bash
 
-# path to the file waybar reads
-STATUS_FILE="/tmp/waybar_timer.json"
-# path to a file to store the pid of the background process
-PID_FILE="/tmp/waybar_timer.pid"
-# Sound to play
+# Bar widget state: an end timestamp it ticks from.
+STATE_DIR="$HOME/.local/state/march"
+STATE_FILE="$STATE_DIR/timer.json"
+PID_FILE="$STATE_DIR/timer.pid"
 SOUND_FILE="$HOME/.local/share/sounds/default-alarm.mp3"
-# Store custom message
-MESSAGE_FILE="/tmp/waybar_timer_message.txt"
 
-print_json() {
-    text=$1
-    tooltip=$2
-    class=$3
-    echo "{\"text\": \"$text\", \"tooltip\": \"$tooltip\", \"class\": \"$class\"}" > "$STATUS_FILE"
+escape_json() {
+    local text=${1//\\/\\\\}
+    text=${text//\"/\\\"}
+    printf '%s' "${text//$'\n'/ }"
+}
+
+write_state() {
+    mkdir -p "$STATE_DIR"
+    printf '{"endsAt": %s, "message": "%s"}\n' "$1" "$(escape_json "$2")" > "$STATE_FILE"
+    # Nudge the bar widget, quietly.
+    omarchy-shell -q marcos.countdown reload 2>/dev/null || true
+}
+
+cancel_running() {
+    [ -f "$PID_FILE" ] || return 0
+    kill "$(cat "$PID_FILE")" 2>/dev/null
+    rm -f "$PID_FILE"
 }
 
 stop_timer() {
-    if [ -f "$PID_FILE" ]; then
-        kill "$(cat "$PID_FILE")" 2>/dev/null
-        rm "$PID_FILE"
-    fi
-    print_json "" "Timer stopped" "stopped"
-    exit 0
+    cancel_running
+    write_state 0 ""
 }
 
 start_timer() {
-    # If a timer is already running, stop it first
-    [ -f "$PID_FILE" ] && stop_timer
+    cancel_running
 
     duration=$1
     message="${2:-Your $duration timer is up!}"
-    
-    # Store the message for the background process
-    echo "$message" > "$MESSAGE_FILE"
-    
-    # Simple regex to handle just minutes (e.g., 10) or minutes+suffix (e.g., 10m)
+
+    # Bare number means minutes; 10m and 30s also work.
     if [[ "$duration" =~ ^[0-9]+$ ]]; then
-        total_seconds=$(($duration * 60))
+        total_seconds=$((duration * 60))
     elif [[ "$duration" =~ ^([0-9]+)m$ ]]; then
         total_seconds=$((${BASH_REMATCH[1]} * 60))
     elif [[ "$duration" =~ ^([0-9]+)s$ ]]; then
@@ -47,28 +48,27 @@ start_timer() {
         exit 1
     fi
 
-    # Fork the countdown loop to background
+    write_state "$(($(date +%s) + total_seconds))" "$message"
+
+    # One sleep instead of a per-second loop.
     (
         echo $BASHPID > "$PID_FILE"
-        for ((i=total_seconds; i>0; i--)); do
-            minutes=$((i / 60))
-            seconds=$((i % 60))
-            # Format nicely as MM:SS
-            formatted=$(printf "%02d:%02d" $minutes $seconds)
-            print_json "󱎫 $formatted" "Time remaining: $formatted" "running"
-            sleep 1
-        done
+        sleep "$total_seconds" &
+        countdown=$!
+        # `wait` lets a stop kill the sleep at once.
+        trap 'kill $countdown 2>/dev/null; exit 0' TERM
+        wait $countdown
 
-        # Timer finished
-        print_json "󱎫 00:00" "Timer Finished" "critical"
-        stored_message=$(cat "$MESSAGE_FILE" 2>/dev/null || echo "$duration is up!")
-        notify-send -u critical -t 0 -i clock "Timer Finished" "$stored_message"
-        paplay --volume=65536 "$SOUND_FILE" 2>/dev/null
-        
-        # Wait a few seconds showing 00:00 then hide
+        notify-send -u critical -t 0 -i clock "Timer Finished" "$message"
+        # Background, so the alarm does not delay the clear.
+        paplay --volume=65536 "$SOUND_FILE" 2>/dev/null &
+
+        # Hold 00:00, then clear. A newer timer owns the file.
         sleep 5
-        print_json "" "Timer Idle" "stopped"
-        rm -f "$PID_FILE" "$MESSAGE_FILE"
+        if [ "$(cat "$PID_FILE" 2>/dev/null)" = "$BASHPID" ]; then
+            write_state 0 ""
+            rm -f "$PID_FILE"
+        fi
     ) &
 }
 

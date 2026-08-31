@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "marcos.countdown",
+  "name": "Countdown",
+  "version": "1.0.0",
+  "author": "Marcos Cannabrava",
+  "description": "Countdown for the `timer` command",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Countdown.qml"
+  },
+  "barWidget": {
+    "displayName": "Countdown",
+    "description": "Countdown for the `timer` command",
+    "category": "Time",
+    "allowMultiple": false,
+    "defaultSection": "center"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "marcos.app-switcher",
+  "name": "App switcher",
+  "version": "1.0.0",
+  "author": "Marcos Cannabrava",
+  "description": "Every open window, grouped by workspace, click to focus",
+  "kinds": [
+    "overlay"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "overlay": "AppSwitcher.qml"
+  }
+}

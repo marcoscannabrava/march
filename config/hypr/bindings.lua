@@ -26,6 +26,10 @@ o.bind_toggle("SUPER + M", "Toggle silencing notifications", "notification-silen
 hl.unbind("SUPER + ESCAPE") -- was: system menu
 o.bind("SUPER + ESCAPE", "Dismiss all notifications", "omarchy-shell notifications dismissAll")
 
+-- App switcher
+hl.unbind("SUPER + TAB") -- was: next workspace
+o.bind("SUPER + TAB", "App switcher", "omarchy-shell shell toggle marcos.app-switcher")
+
 -- Window and session actions
 o.bind("SUPER + Q", "Close window", hl.dsp.window.close())
 o.bind("ALT + F4", "Close window", hl.dsp.window.close())

@@ -7,6 +7,9 @@
           "id": "omarchy.indicators"
         },
         {
+          "id": "marcos.countdown"
+        },
+        {
           "format": "dddd HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
@@ -61,6 +64,10 @@
     "lock": 330,
     "screensaver": 150
   },
-  "plugins": [],
+  "plugins": [
+    {
+      "id": "marcos.app-switcher"
+    }
+  ],
   "version": 1
 }
