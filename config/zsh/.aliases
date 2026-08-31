@@ -106,22 +106,9 @@ function mdless() {
     pandoc -s -f markdown -t man --wrap=none $1 | man -l -
 }
 
+# vscode as a simple text editor
+alias dumbcode='code -n --disable-extensions --disable-gpu --disable-telemetry --disable-crash-reporter --disable-updates --disable-lcd-text --sync off'
 
-# nw = New Worktree, create a new git worktree for the given branch name
-function nw() {
-  if [[ -z "$1" ]]; then
-    echo "Usage: ga [branch name]"
-    exit 1
-  fi
-
-  local branch="$1"
-  local base="$(basename "$PWD")"
-  local path="../${base}--${branch}"
-
-  git worktree add -b "$branch" "$path"
-  mise trust "$path"
-  cd "$path"
-}
 
 #               ------- Useful Docker Aliases --------                                  #
 #     https://gist.githubusercontent.com/jgrodziski/9ed4a17709baad10dbcd4530b60dfcbb/   #
