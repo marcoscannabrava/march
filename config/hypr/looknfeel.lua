@@ -37,7 +37,7 @@ hl.config({
       height = 14,
       font_size = 14,
       col = {
-        locked_inactive = "rgba(414868aa)",
+        locked_active = "rgba(008277ff)",
       },
     },
   },
