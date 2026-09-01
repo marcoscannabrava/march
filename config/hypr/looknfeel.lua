@@ -29,17 +29,13 @@ hl.animation({ leaf = "fade", enabled = true, speed = 10, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "wind" })
 
 -- Small title bars on terminal windows.
--- Terminals open as locked single-window groups,
--- so the groupbar renders as a title bar.
--- Locked groups draw the locked_* colors.
+-- Terminals open as locked single-window groups, so the groupbar renders as a title bar. Locked groups draw the locked_* colors.
 hl.config({
   group = {
     groupbar = {
-      -- A lone window must still draw its bar.
       disable_when_only = false,
       height = 14,
-      font_size = 10,
-      text_color_locked_active = "rgb(1a1b26)",
+      font_size = 14,
       col = {
         locked_inactive = "rgba(414868aa)",
       },

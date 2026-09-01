@@ -85,5 +85,38 @@
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: rizeedu (GitHub org; repo `rizeedu/mono`)",
+      "**Cloud provider(s)**: AWS (ECS, SQS, S3, Lambda, DynamoDB — via OpenTofu), Heroku (backend staging/production), Vercel (admin-ui, college-ui), GCP BigQuery (read via `@rize/bigquery` / `bq`), Sanity (cms)",
+      "**Repository visibility**: private (rizeedu/mono, confirmed via gh)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: CI secrets referenced by name only (AWS_ROLE_ARN, HEROKU_API_KEY, GITHUB_TOKEN, TURBO_TOKEN, SLACK_CANARY_BOT_TOKEN, STUDENT_UI_PROMOTE_TOKEN, NEXT_PUBLIC_SANITY_TOKEN, CANARY_AUTOFIX_ROUTINE_TOKEN, and related) — values never seen; `.env*` files gitignored except `.env.example`/`.env.test`",
+      "**Default / protected branches**: `main` (default), `production` — protected via ruleset `protect-main` (active) plus explicit protected-branches list `main`, `production`",
+      "**CI/CD deploy targets**: Heroku (backend staging→production), ECS via `full-demo-env` (demo), Vercel (admin-ui, college-ui), GHCR image `ghcr.io/rizeedu/admin-ui:main`, S3 (grading-assistant-ui UMD bundle, static), Sanity (`sanity deploy`), AWS Lambda via OpenTofu (radar, sci)",
+      "**Network posture**: None configured",
+      "**Source control**: rizeedu/mono (this repo) and its `origin` remote `github.com:rizeedu/mono.git` only",
+      "**Trusted internal domains**: admin.rize.education, auth.staging.rize.education, rize-staging.us.auth0.com (hosts contacted from this project's sessions)",
+      "**Trusted cloud buckets**: rize-tofu-state, rize-canvas-tofu-state (both usage-corroborated — contacted in this project's transcripts); grading-assistant-widget-staging (config-derived — not a confirmed upload destination; uploads of local data still require confirmation)",
+      "**Key internal services**: rize-backend GraphQL API, gateway tRPC API, Canvas (LMS, system of record), Sentry org `rize-education`, Linear (Engineering), Slack `#eng-sentry`",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: student PII in production databases (accessed only via read-only `rize-support` login or the `rize` CLI); `.env`/`.env.local`/`.env.production` files across apps (gitignored); `apps/student-ui/lib/rbac.ts` and its test — authorization-relevant; `packages/authz/` — authorization policy; share only with audiences cleared per the repo's own access controls",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any host/namespace/container containing `prod` or `production` as a whole segment — includes Heroku production app, ECS/OpenTofu `production` workspace, the `production` branch, Sentry `production`/`vercel-production` environments, `canvas_production` database",
+      "**Protected deployment namespaces / environments**: Heroku production app, ECS demo/production via `full-demo-env`, OpenTofu `production` workspaces (backend, gateway, radar, canvas), Sentry `production`/`vercel-production`",
+      "**Protected IaC scopes**: `infrastructure/apps/*` OpenTofu configs (IAM, networking, ECS, RDS, ElastiCache in `infrastructure/apps/canvas/iam.tf`, `iam_s3_user.tf`, `security_groups.tf`, etc.); shared OpenTofu state bucket `rize-tofu-state` and lock table `rize-tofu-locks` (profile `rize-tofu`); anything named/tagged `prod` or `production`",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development on the rizeedu/mono monorepo (backend, gateway, admin-ui, college-ui, cms, radar, grading-assistant-ui) plus production support workflows (/triage, /intervene, /capture, /sentry-recap)",
+      "**Trusted repo**: rizeedu/mono (this checkout) and its `origin` remote `github.com:rizeedu/mono.git` — private, so confidential material is fine to commit here but content ported from other repos/checkouts is not this repo's own work",
+      "**Org-specific CLIs**: `rize` (ops CLI, `apps/cli`, service-account key against backend GraphQL), `heroku` (staging/production releases), `bq` (BigQuery, read-only local use), `aws` (read-only production access per docs/kb/production-read-access), `gcloud`, `tofu` (OpenTofu infra apply)",
+      "**routine under this repo's `docs/` prefix**: `/capture` is the only writer to `docs/kb/` and `docs/runbooks/`; treat other agent writes to `docs/` as out of routine scope"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(heroku releases:info:*) — dumps the app's entire config var set (secrets) per CLAUDE.md; prefer `heroku releases`",
+      "Bash(tofu apply:*) in infrastructure/apps/** targeting a `production` workspace/tfvars"
+    ]
+  }
 }

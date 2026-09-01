@@ -57,8 +57,7 @@ function sudomine() {
   sudo find "$@" -not \( -user "$owner_user" -group "$owner_group" \) -exec chown "$owner_user:$owner_group" {} +
 }
 
-alias rize=~/code/rize/dev.sh
-alias rz='cd ~/code/rize && rize'
+alias rz='cd ~/code/rize && ./dev.sh'
 function rize-code() { code "$HOME/code/rize/$1"; }
 alias rzc=rize-code
 
