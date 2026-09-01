@@ -29,13 +29,20 @@ DRIVE_CHUNK_SIZE="${MARCH_GDRIVE_CHUNK_SIZE:-32M}"
 
 echo "-----> Running Google Drive backup script on $(timestamp)"
 
+# Files Drive refuses to serve; owner disabled download
+EXCLUDES=(
+    "--exclude=/Marcos/Docs/zOthers/GUIA-GRAJAU-FINAL4 b.pdf"
+)
+
 rclone copy \
     --drive-chunk-size "$DRIVE_CHUNK_SIZE" \
+    --drive-skip-dangling-shortcuts \
     --fast-list \
     --transfers "$RCLONE_TRANSFERS" \
     --checkers "$RCLONE_CHECKERS" \
     --ignore-checksum \
     --update \
+    "${EXCLUDES[@]}" \
     "$@" \
     google-drive:/ \
     b2:gdrivebkp
