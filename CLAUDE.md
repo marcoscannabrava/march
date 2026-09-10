@@ -69,25 +69,6 @@ For behavior, run the real thing: `timer 5s`, `/usr/local/lib/march/backup --dry
   `git submodule update` as a side effect of other work.
 - `config/_home/.claude/.credentials.json` — gitignored OAuth token. Never read, print, or commit it.
 
-## Claude Code config lives here too
-
-`~/.claude/CLAUDE.md`, `settings.json`, and `pstack-models.md` are symlinks into
-`config/_home/.claude/`. Editing them rewrites your own instructions mid-session.
-
-Claude Code writes back to `settings.json` (auto-mode environment notes) and
-`plugins/installed_plugins.json` (plugin updates). Those writes land in the working tree as
-uncommitted changes. Before committing, check the diff and strip any work-specific
-`autoMode.environment` data — this repo is public.
-
-Skills under `claude/plugins/ship/skills/` are also symlinked into `~/.claude/skills/`. A new
-skill needs `./install.sh -s` plus a Claude Code restart. See `claude/README.md`.
-
-## Codex config lives here too
-
-`~/.codex/config.toml`, `rules/default.rules`, and `bin/codex-notify` are symlinks into
-`config/_home/.codex/`. Codex auth and runtime state stay outside the repo. Add new Codex
-configuration files under that directory so `./install.sh -s` picks them up.
-
 ## Commits
 
 Short lowercase subjects, conventional prefix when it fits: `feat:`, `fix:`, `style:`.
