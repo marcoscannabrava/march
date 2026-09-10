@@ -145,14 +145,6 @@ if [ $SYMLINK_FILES = true ]; then
         ensure_link "$REPO_DIR/$file" "$target"
     done
 
-    log_purple "############################################"
-    log_purple "###### symlinking claude code skills #######"
-    log_purple "############################################\n"
-    for dir in "$REPO_DIR"/claude/plugins/ship/skills/*/; do
-        src="${dir%/}"
-        ensure_link "$src" "$HOME/.claude/skills/$(basename "$src")"
-    done
-
     log_purple "######################################"
     log_purple "######### symlinking scripts #########"
     log_purple "######################################\n"

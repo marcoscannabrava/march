@@ -82,6 +82,12 @@ uncommitted changes. Before committing, check the diff and strip any work-specif
 Skills under `claude/plugins/ship/skills/` are also symlinked into `~/.claude/skills/`. A new
 skill needs `./install.sh -s` plus a Claude Code restart. See `claude/README.md`.
 
+## Codex config lives here too
+
+`~/.codex/config.toml`, `rules/default.rules`, and `bin/codex-notify` are symlinks into
+`config/_home/.codex/`. Codex auth and runtime state stay outside the repo. Add new Codex
+configuration files under that directory so `./install.sh -s` picks them up.
+
 ## Commits
 
 Short lowercase subjects, conventional prefix when it fits: `feat:`, `fix:`, `style:`.

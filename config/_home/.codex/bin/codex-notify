@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+set -u
+
+mode=${1:-}
+title="Codex"
+message="Open Codex to continue."
+sound_file="/usr/share/sounds/freedesktop/stereo/message-new-instant.oga"
+
+case "$mode" in
+  --complete)
+    payload=${2:-{}}
+    title="Codex is ready"
+    sound_file="/usr/share/sounds/freedesktop/stereo/complete.oga"
+
+    if jq -e . >/dev/null 2>&1 <<<"$payload"; then
+      message=$(jq -r '
+        (."last-assistant-message" // "Turn complete")
+        | gsub("[\\r\\n\\t]+"; " ")
+        | gsub("  +"; " ")
+        | if length > 280 then .[0:277] + "..." else . end
+      ' <<<"$payload")
+    else
+      message="Turn complete."
+    fi
+    ;;
+  --input)
+    title="Codex needs your input"
+    message="Open the terminal to continue."
+    ;;
+  *)
+    exit 0
+    ;;
+esac
+
+notify-send \
+  --urgency=normal \
+  --app-name=Codex \
+  --icon=dialog-information \
+  "$title" \
+  "$message"
+
+if command -v canberra-gtk-play >/dev/null 2>&1; then
+  canberra-gtk-play --file="$sound_file" --description="$title" >/dev/null 2>&1
+elif command -v pw-play >/dev/null 2>&1; then
+  pw-play "$sound_file" >/dev/null 2>&1
+fi

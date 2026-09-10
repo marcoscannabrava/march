@@ -1,0 +1,89 @@
+notify = ["/home/marcos/.codex/bin/codex-notify", "--complete"]
+personality = "pragmatic"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "high"
+approvals_reviewer = "auto_review"
+plan_mode_reasoning_effort = "high"
+[projects."/home/marcos/code/loancrate-dev/loancrate"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/rize/.git/modules"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/sandbox/server"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/sandbox/agentic-repo-template"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/rize"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/rize/student-ui"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/rize/mono"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/notes"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/rize/mono/apps/backend"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/rize/claude-plugins"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/rize/mono/apps/student-ui"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/march"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/dotfiles"]
+trust_level = "trusted"
+
+[projects."/tmp/support-accomodations"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/rize/canvas-infra"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/trading"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/trading/tmp"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/trading/tmp-codex"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/sandbox/amesa-agents"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/rize/canvas-lms"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/agent-dancefloor"]
+trust_level = "trusted"
+
+[projects."/home/marcos/.codex"]
+trust_level = "trusted"
+
+[notice.model_migrations]
+"gpt-5.2-codex" = "gpt-5.3-codex"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+"gpt-5.6-sol" = 4
+
+[mcp_servers.sentry]
+command = "npx"
+args = ["-y", "mcp-remote@latest", "https://mcp.sentry.dev/mcp"]
+
+[tui]
+notifications = ["approval-requested"]
+notification_condition = "always"
+notification_method = "bel"
+status_line = ["model-with-reasoning", "current-dir", "thread-name", "context-window-size", "used-tokens", "task-progress"]
+status_line_use_colors = true

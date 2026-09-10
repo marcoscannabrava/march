@@ -2,6 +2,9 @@
 config/_home/.claude/.credentials.json
 config/_home/.claude/*.credentials.json
 
+# Codex credentials — never version these
+config/_home/.codex/auth.json
+
 # playwright-skill installs its own deps via `npm run setup`
 claude/plugins/ship/skills/playwright-skill/node_modules/
 claude/plugins/ship/skills/playwright-skill/package-lock.json

@@ -57,6 +57,19 @@ Claude Code rewrites `settings.json` (auto-mode environment notes) and
 those writes show up as uncommitted changes — review before committing, and keep work-specific
 `autoMode.environment` data out of this public repo.
 
+# codex config
+
+`~/.codex` config lives in `config/_home/.codex/` and is symlinked by `./install.sh -s`:
+
+| File | Notes |
+|---|---|
+| `config.toml` | model, UI, MCP, notification, and trusted-project settings |
+| `rules/default.rules` | approved command-prefix rules |
+| `bin/codex-notify` | desktop notification helper used by `config.toml` |
+
+Codex auth, history, sessions, databases, caches, and other runtime state stay in `$HOME` and
+are not versioned.
+
 # docs
 
 Notes live in `docs/`. `docs/ideas/` holds parked, unimplemented ideas — not to be acted on.

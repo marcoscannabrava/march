@@ -1,4 +1,8 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(npm:*)",
@@ -87,6 +91,11 @@
   "theme": "dark",
   "skipAutoPermissionPrompt": true,
   "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(heroku releases:info:*) — dumps the app's entire config var set (secrets) per CLAUDE.md; prefer `heroku releases`",
+      "Bash(tofu apply:*) in infrastructure/apps/** targeting a `production` workspace/tfvars"
+    ],
     "environment": [
       "### Org-wide",
       "**Organization**: rizeedu (GitHub org; repo `rizeedu/mono`)",
@@ -112,11 +121,6 @@
       "**Trusted repo**: rizeedu/mono (this checkout) and its `origin` remote `github.com:rizeedu/mono.git` — private, so confidential material is fine to commit here but content ported from other repos/checkouts is not this repo's own work",
       "**Org-specific CLIs**: `rize` (ops CLI, `apps/cli`, service-account key against backend GraphQL), `heroku` (staging/production releases), `bq` (BigQuery, read-only local use), `aws` (read-only production access per docs/kb/production-read-access), `gcloud`, `tofu` (OpenTofu infra apply)",
       "**routine under this repo's `docs/` prefix**: `/capture` is the only writer to `docs/kb/` and `docs/runbooks/`; treat other agent writes to `docs/` as out of routine scope"
-    ],
-    "soft_deny": [
-      "$defaults",
-      "Bash(heroku releases:info:*) — dumps the app's entire config var set (secrets) per CLAUDE.md; prefer `heroku releases`",
-      "Bash(tofu apply:*) in infrastructure/apps/** targeting a `production` workspace/tfvars"
     ]
   }
 }
