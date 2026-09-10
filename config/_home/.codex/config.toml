@@ -1,4 +1,4 @@
-notify = ["/home/marcos/.codex/bin/codex-notify", "--complete"]
+notify = ["/home/marcos/.codex/bin/codex-notify"]
 personality = "pragmatic"
 model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
@@ -83,7 +83,7 @@ args = ["-y", "mcp-remote@latest", "https://mcp.sentry.dev/mcp"]
 
 [tui]
 notifications = ["approval-requested"]
-notification_condition = "always"
+notification_condition = "unfocused"
 notification_method = "bel"
 status_line = ["model-with-reasoning", "current-dir", "thread-name", "context-window-size", "used-tokens", "task-progress"]
 status_line_use_colors = true

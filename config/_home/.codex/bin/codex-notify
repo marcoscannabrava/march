@@ -2,36 +2,34 @@
 
 set -u
 
-mode=${1:-}
-title="Codex"
-message="Open Codex to continue."
+argument=${1:-}
+title="Codex needs your input"
+message="Open the terminal to continue."
 sound_file="/usr/share/sounds/freedesktop/stereo/message-new-instant.oga"
 
-case "$mode" in
-  --complete)
-    payload=${2:-{}}
-    title="Codex is ready"
-    sound_file="/usr/share/sounds/freedesktop/stereo/complete.oga"
+# Existing Codex sessions may still have the previous argv loaded.
+if [[ "$argument" == "--complete" ]]; then
+  argument=${2:-}
+fi
 
-    if jq -e . >/dev/null 2>&1 <<<"$payload"; then
-      message=$(jq -r '
-        (."last-assistant-message" // "Turn complete")
-        | gsub("[\\r\\n\\t]+"; " ")
-        | gsub("  +"; " ")
-        | if length > 280 then .[0:277] + "..." else . end
-      ' <<<"$payload")
-    else
-      message="Turn complete."
-    fi
-    ;;
-  --input)
-    title="Codex needs your input"
-    message="Open the terminal to continue."
-    ;;
-  *)
+if [[ "$argument" != "--input" ]]; then
+  if ! jq -e 'type == "object"' >/dev/null 2>&1 <<<"$argument"; then
     exit 0
-    ;;
-esac
+  fi
+
+  if [[ $(jq -r '.type // empty' <<<"$argument") != "agent-turn-complete" ]]; then
+    exit 0
+  fi
+
+  title="Codex is ready"
+  sound_file="/usr/share/sounds/freedesktop/stereo/complete.oga"
+  message=$(jq -r '
+    (."last-assistant-message" // "Turn complete" | tostring)
+    | gsub("[\\r\\n\\t]+"; " ")
+    | gsub("  +"; " ")
+    | if length > 280 then .[0:277] + "..." else . end
+  ' <<<"$argument")
+fi
 
 notify-send \
   --urgency=normal \
