@@ -1,8 +1,8 @@
 ### Shipping
 
-**You own what lands. Verify each PR independently, land only the verified run from the root, then keep your hands off the queue.** For "land the stack", "ship it", "enable merge when ready", or the second half of a stack that **Babysit** already drove to green.
+**You own what lands. Verify each PR independently, land only the verified run from the root, then keep your hands off the queue.** For "land the stack", "ship it", "enable merge when ready", or a stack already driven to green.
 
-This is the half after `playbooks/babysit.md`. Babysit makes a stack mergeable. Shipping decides what is actually safe to merge and lets Graphite drain it. Green is not safe, and the gap between those two words is where this playbook lives.
+Driving a stack to green makes it mergeable. Shipping decides what is actually safe to merge and lets Graphite drain it. Green is not safe, and the gap between those two words is where this playbook lives.
 
 1. **Verify every PR independently before arming anything.** One subagent per PR, not batched, each in its own worktree, each exercising the real surface (the `verify` skill for UIs, `run` for CLIs and TUIs, as the change demands) against parent versus head. Each returns `PASS`, `PASS+NOTES` or `FAIL` and posts that verdict on its own PR so the record outlives the chat. Safe means a verdict from an agent that did not write the code. CI green is not a verdict, and an approving bot review is not a verdict.
 2. **Land only the contiguous verified run rooted at the bottom.** Walk up from the lowest unmerged PR and stop at the first one without a passing verdict, where both `PASS` and `PASS+NOTES` pass. A verified PR sitting above an unverified one is not landable, because merging it would pull the gap in underneath it. Report the ceiling as a PR number and say what breaks the chain.

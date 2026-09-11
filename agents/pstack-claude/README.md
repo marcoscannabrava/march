@@ -1,6 +1,6 @@
 # pstack for Claude Code, Codex, and Prime Agent
 
-Claude Code port of [poteto](https://x.com/poteto)'s [pstack](https://github.com/cursor/plugins/tree/main/pstack) plugin (skill tree synced against upstream `4612556`, pstack v0.14.2 — see [What's deliberately not ported](#whats-deliberately-not-ported)). The same `skills/` tree also ships as a Codex plugin (see [Running on Codex](#running-on-codex)) and is discovered as-is by [Prime Agent](https://github.com/PrimeIntellect-ai/prime-agent) (see [Prime Agent](#prime-agent)). Original by Lauren Tan; ships MIT. Imports seven skills from [cursor-team-kit](https://github.com/cursor/plugins/tree/main/cursor-team-kit) (also MIT): `deslop`, `thermo-nuclear-code-quality-review`, `make-pr-easy-to-review`, `fix-ci`, `fix-merge-conflicts`, `get-pr-comments`, `what-did-i-get-done`.
+Claude Code port of [poteto](https://x.com/poteto)'s [pstack](https://github.com/cursor/plugins/tree/main/pstack) plugin (skill tree synced against upstream `4612556`, pstack v0.14.2 — see [What's deliberately not ported](#whats-deliberately-not-ported)). The same `skills/` tree also ships as a Codex plugin (see [Running on Codex](#running-on-codex)) and is discovered as-is by [Prime Agent](https://github.com/PrimeIntellect-ai/prime-agent) (see [Prime Agent](#prime-agent)). Original by Lauren Tan; ships MIT. Imports two skills from [cursor-team-kit](https://github.com/cursor/plugins/tree/main/cursor-team-kit) (also MIT): `thermo-nuclear-code-quality-review`, `make-pr-easy-to-review`.
 
 > if you want to go fast, go deep first. pstack helps you write less, but higher quality code. rigorous agent workflows you can parallelize with confidence.
 
@@ -102,7 +102,7 @@ Verified on a live Codex session installed via the symlinks: the user-facing ski
 
 Nothing is declared in `plugin.json`. Install the one companion plugin yourself:
 
-- **`plugin-dev`** (from the `claude-plugins-official` marketplace) — the rewiring routes skill-authoring tasks (in `automate-me`, `reflect`, `poteto-mode`) to the `plugin-dev:skill-development` skill:
+- **`plugin-dev`** (from the `claude-plugins-official` marketplace) — the rewiring routes skill-authoring tasks (in `reflect`, `poteto-mode`) to the `plugin-dev:skill-development` skill:
 
   ```shell
   /plugin marketplace add anthropics/claude-plugins-official
@@ -114,7 +114,7 @@ Nothing is declared in `plugin.json`. Install the one companion plugin yourself:
 Not declared as deps, but referenced in skill bodies:
 
 - **`run`, `verify`, `loop`** — Claude Code CLI built-ins (ship with the binary, always available).
-- **`gh` CLI** — system-level requirement of the `babysit` skill and the Babysit / Shipping playbooks. Install via [`brew install gh`](https://cli.github.com) and authenticate with `gh auth login`.
+- **`gh` CLI** — system-level requirement of the Shipping playbook and the `watch-pr` PR watcher. Install via [`brew install gh`](https://cli.github.com) and authenticate with `gh auth login`.
 - **`bun`** — runs the vendored `skills/poteto-mode/scripts/` tooling (`watch-pr`, `orch`). Install via [`brew install oven-sh/bun/bun`](https://bun.sh). Only the playbooks that call those scripts need it; `bootstrap.ts` installs the script dependencies on first run.
 - **`gt` (Graphite CLI)** — only for the stack playbooks (Shipping, Orchestrate, the autopilots). Everything else works without it.
 - **`jq` and `rg` (ripgrep)** — only for `scripts/worktree-audit.sh` (the Worktree cleanup playbook). Without them the audit still runs but blanks its PR and LAST_CHAT columns, so it warns on stderr rather than returning a table that looks complete.
@@ -131,14 +131,12 @@ No third-party plugins. The harsher-critique escape hatch lives in the bundled `
 | `/architect` | settle types and module shape before writing code that crosses a function boundary |
 | `/arena` | run N parallel attempts at the same task and pick the best parts |
 | `/interrogate` | have four different models try to break a diff |
-| `/automate-me` | draft your own personal -mode skill from recent transcripts |
 | `/reflect` | capture a long task's lessons as a skill edit |
 | `/tdd` | fix a bug by writing the failing test first, then the fix |
 | `/typescript-best-practices` | ground type-system discipline in TypeScript syntax |
 | `/teach` | understand a change or subsystem for real: `how` + `why` woven into one plain explanation |
 | `/swarm` | fan out N parallel workers across slices or races, then one aggregated report |
 | `/technical-writing` | write docs, RFCs, readmes, PR descriptions, and commit messages to one layered standard |
-| `/bro` | restate the last message in plain human language, no jargon |
 | `/figure-it-out` | design a rigorous, auditable playbook for a task no bundled playbook fits |
 | `/show-me-your-work` | log decisions to a reviewable tsv decision trail |
 | `/blast-radius` | find what a change could break beyond the diff and prove safety by running code |
@@ -148,14 +146,8 @@ No third-party plugins. The harsher-critique escape hatch lives in the bundled `
 | `/no-comments` | strip comments before review via the `comment-sicko` subagent, then fix what it finds |
 | `/create-verification-skill` | generate a project-local verification skill and feature map |
 | `/maintain-verification-skill` | re-sync a drifted verification skill and its feature map |
-| `/deslop` | deslop a diff before commit |
-| `/babysit` | monitor an open PR, fix CI/comments, keep it merge-ready |
 | `/thermo-nuclear-code-quality-review` | extremely strict maintainability audit |
 | `/make-pr-easy-to-review` | clean noisy history and improve PR description before review |
-| `/fix-ci` | find failing PR checks, inspect logs, apply focused fixes |
-| `/fix-merge-conflicts` | non-interactively resolve merge conflicts, validate, finalize |
-| `/get-pr-comments` | fetch and summarize review comments from the active PR |
-| `/what-did-i-get-done` | summarize authored commits over a user-chosen period |
 
 ## Subagents
 
@@ -169,14 +161,8 @@ The port is editorial, not mechanical. Anywhere upstream pstack assumed Cursor-s
 
 ### What's added
 
-- **`skills/babysit/`** — Claude Code analog of Cursor's closed-source `/babysit` built-in. Wraps `gh pr view` / `gh pr checks` / `gh run view --log-failed` plus the `loop` skill for pacing. Independently authored; workflow informed by Cursor's public `/babysit` behavior — not a copy of Cursor's implementation. Since the v0.14.2 sync, poteto-mode routes PR-status requests to the ported `playbooks/babysit.md` instead, and this skill is the standalone `/babysit` entry point.
-- **`skills/deslop/`** — imported verbatim from `cursor-team-kit`. Cleans AI tells out of diffs before commit.
 - **`skills/thermo-nuclear-code-quality-review/`** — imported verbatim from `cursor-team-kit`. Used as the harsher-critique escape hatch in `arena`, `interrogate`, `architect`, and `how` (replaces the Cursor-original cross-vendor bridge).
-- **`skills/make-pr-easy-to-review/`** — imported verbatim from `cursor-team-kit`. Composes with `opening-a-pr` and `babysit`.
-- **`skills/fix-ci/`** — imported verbatim from `cursor-team-kit`. Narrower CI-fix primitive that `babysit` can route to.
-- **`skills/fix-merge-conflicts/`** — imported verbatim from `cursor-team-kit`. Pairs with `babysit` step 5.
-- **`skills/get-pr-comments/`** — imported verbatim from `cursor-team-kit`. Primitive for `babysit` step 4 and `reflect`.
-- **`skills/what-did-i-get-done/`** — imported verbatim from `cursor-team-kit`. Commit summary over a chosen period.
+- **`skills/make-pr-easy-to-review/`** — imported verbatim from `cursor-team-kit`. Composes with `opening-a-pr`.
 
 ### What's substituted in skill bodies
 
@@ -185,7 +171,6 @@ The port is editorial, not mechanical. Anywhere upstream pstack assumed Cursor-s
 | `Task` tool, `subagent_type: generalPurpose`, `readonly: false/true` | `Agent` tool, `subagent_type: "general-purpose"`, no readonly flag (subagent_type controls MCP access) |
 | `AskQuestion` tool | `AskUserQuestion` tool |
 | Cursor's built-in `/loop` | Claude Code's built-in `loop` skill |
-| Cursor's built-in `/babysit` | `babysit` skill bundled in this plugin. From v0.14.0 upstream routes PR-status requests inside poteto-mode to `playbooks/babysit.md` instead; the port does the same, and `/babysit` stays the standalone entry point |
 | Cursor's built-in `/create-skill` | `plugin-dev:skill-development` skill |
 | `cursor-team-kit` `control-cli` (CLI/TUI driver) | Claude Code's `run` skill |
 | `cursor-team-kit` `control-ui` (browser/Electron driver) | Claude Code's `verify` skill |
@@ -209,7 +194,7 @@ The port is editorial, not mechanical. Anywhere upstream pstack assumed Cursor-s
 
 - The `poteto-agent` subagent ID and all references to it.
 - `run_in_background: true` on Agent calls (Claude Code supports it).
-- `/loop`, `/deslop`, `/babysit` slash references in skill bodies — they all resolve in Claude Code now.
+- `/loop` slash references in skill bodies — resolves in Claude Code now.
 - The principle/playbook structure and every word of the principles themselves.
 
 ### What's deliberately not ported
@@ -218,7 +203,7 @@ The port is editorial, not mechanical. Anywhere upstream pstack assumed Cursor-s
 - **`docs/guide/`** (upstream `02c03a9`, `0b7ef5b`, `424829e`) — the ten-chapter usage tutorial and its six screenshots (2.3 MB). It teaches pstack through Cursor's UI, sticky mode, and cloud agents, so a faithful port would be a rewrite rather than a sync, and none of it ships as skill content. Read it upstream at [cursor/plugins/pstack/docs/guide](https://github.com/cursor/plugins/tree/main/pstack/docs/guide); the concepts map through the substitution table above. Revisit if the port grows its own tutorial.
 - **Sticky mode** (upstream `#144`) — Cursor-only `mode`/`icon`/`color`/`reminder` frontmatter with no Claude Code equivalent. The port's 0.9.5 SessionStart hook is the analog and already carries the non-trivial / trivial / opt-out logic.
 - **`is_background: true` on `poteto-agent`** (upstream `99559f2`) — Cursor subagent frontmatter. Claude Code's agent frontmatter has no such key, and `run_in_background: true` on the spawning `Agent` call already covers it.
-- **`cursor-team-kit` beyond the seven imported skills** — the rest either duplicate Claude Code built-ins (`verify-this` → the `verify` skill and built-in verification discipline; `check-compiler-errors` → LSP diagnostics; `control-cli`/`control-ui` → `run`/`verify`, already the substitution targets) or overlap skills this port ships (`loop-on-ci`, `review-and-ship`, `weekly-review` vs `babysit`, `fix-ci`, `make-pr-easy-to-review`, `what-did-i-get-done`). `pr-review-canvas` is Cursor-UI-specific.
+- **`cursor-team-kit` beyond the seven imported skills** — the rest either duplicate Claude Code built-ins (`verify-this` → the `verify` skill and built-in verification discipline; `check-compiler-errors` → LSP diagnostics; `control-cli`/`control-ui` → `run`/`verify`, already the substitution targets) or overlap skills and playbooks this port ships (`loop-on-ci`, `review-and-ship`, `weekly-review` vs the Shipping playbook and `make-pr-easy-to-review`). `pr-review-canvas` is Cursor-UI-specific.
 
 ### Forking note
 
@@ -229,5 +214,5 @@ Editing skill bodies forks this from upstream. Re-syncing to a future pstack rel
 MIT. Three upstream LICENSE files are preserved:
 
 - [LICENSE](LICENSE) — pstack (Lauren Tan)
-- [LICENSE-cursor-team-kit](LICENSE-cursor-team-kit) — Cursor (covers the `deslop` and `thermo-nuclear-code-quality-review` skills)
+- [LICENSE-cursor-team-kit](LICENSE-cursor-team-kit) — Cursor (covers the `thermo-nuclear-code-quality-review` and `make-pr-easy-to-review` skills)
 - [LICENSE-superpowers](LICENSE-superpowers) — superpowers, Jesse Vincent (covers the vendored `hooks/run-hook.cmd`)

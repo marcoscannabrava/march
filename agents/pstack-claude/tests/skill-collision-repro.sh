@@ -47,7 +47,7 @@ fi
 # Flag invariant (CHANGES 0.9.8): no skill may carry disable-model-invocation —
 # on a skill the flag makes the Skill tool refuse the invocation outright, which
 # breaks the SessionStart mandate and model-initiated entry. Frontmatter only:
-# skill bodies may mention the flag in prose (automate-me does).
+# skill bodies may mention the flag in prose.
 flagged=""
 for skill in "$repo"/plugins/pstack/skills/*/SKILL.md; do
   if sed -n '2,/^---$/p' "$skill" | grep -q '^disable-model-invocation: true$'; then
