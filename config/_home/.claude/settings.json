@@ -74,8 +74,8 @@
     },
     "pstack-claude": {
       "source": {
-        "source": "git",
-        "url": "https://github.com/michael-denyer/pstack-claude.git"
+        "source": "directory",
+        "path": "/home/marcos/code/march/agents/pstack-claude"
       }
     }
   },
@@ -84,6 +84,9 @@
   "modelSettings": {
     "claude-fable-5": {
       "effortLevel": "xhigh"
+    },
+    "claude-opus-5": {
+      "effortLevel": "high"
     }
   },
   "showThinkingSummaries": true,

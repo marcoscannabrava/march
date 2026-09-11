@@ -52,10 +52,32 @@ for file in $(find config -type f); do
     check_link "$file" "$target"
 done
 
-echo "== claude skill symlinks =="
-for dir in claude/plugins/ship/skills/*/; do
-    check_link "${dir%/}" "$HOME/.claude/skills/$(basename "$dir")"
+echo "== agents (pstack) =="
+check_link agents/pstack-claude/plugins/pstack/skills "$HOME/.pi/agent/skills/pstack"
+for json in \
+    config/_home/.claude/plugins/known_marketplaces.json \
+    config/_home/.claude/settings.json \
+    config/_home/.codex/config.toml; do
+    if grep -qF "$REPO_DIR/agents/pstack-claude" "$json"; then
+        pass "$json points at the vendored pstack"
+    else
+        fail "stale" "$json does not point at $REPO_DIR/agents/pstack-claude (moved checkout? re-run ./install.sh -a)"
+    fi
 done
+if command -v claude > /dev/null 2>&1; then
+    if claude plugin list 2> /dev/null | grep -q "pstack@pstack-claude"; then
+        pass "claude plugin pstack@pstack-claude installed"
+    else
+        fail "missing" "claude plugin pstack@pstack-claude (run ./install.sh -a)"
+    fi
+fi
+if command -v codex > /dev/null 2>&1; then
+    if codex plugin list 2> /dev/null | grep "pstack@pstack-claude" | grep -q "installed"; then
+        pass "codex plugin pstack@pstack-claude installed"
+    else
+        fail "missing" "codex plugin pstack@pstack-claude (run ./install.sh -a)"
+    fi
+fi
 
 echo "== script symlinks =="
 for file in scripts/*; do

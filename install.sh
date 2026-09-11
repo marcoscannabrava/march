@@ -38,8 +38,9 @@ usage() {
     echo "  -s, --symlink        Symlink dotfiles"
     echo "  -w, --wallpapers     Install wallpapers and splashscreen"
     echo "  -k, --keymap         Install keymap configuration"
+    echo "  -a, --agents         Wire the vendored pstack plugin into claude, codex, and pi"
     echo ""
-    echo "Example: $0 -pswk # installs packages, symlinks files, wallpapers, and keymap"
+    echo "Example: $0 -pswka # installs packages, symlinks files, wallpapers, keymap, and agent plugins"
     echo ""
     echo "Check machine drift with: install/doctor.sh"
     exit 0
@@ -50,10 +51,11 @@ INSTALL_PACKAGES=false
 SYMLINK_FILES=false
 INSTALL_WALLPAPERS_AND_SPLASHSCREEN=false
 INSTALL_KEYMAP=false
+WIRE_AGENTS=false
 
 if [ $# -eq 0 ]; then usage; fi
 
-while getopts "poswkh" option; do
+while getopts "poswkah" option; do
     case $option in
         p)
             log_purple "-packages: package installation...\n\n"
@@ -74,6 +76,10 @@ while getopts "poswkh" option; do
         k)
             log_purple "-keymap: keymap configuration...\n\n"
             INSTALL_KEYMAP=true
+            ;;
+        a)
+            log_purple "-agents: wiring agent plugins...\n\n"
+            WIRE_AGENTS=true
             ;;
         h|*)
             usage
@@ -167,6 +173,13 @@ if [ $SYMLINK_FILES = true ]; then
     for file in $(find sounds -type f); do
         ensure_link "$REPO_DIR/$file" "$HOME/.local/share/sounds/$(basename "$file")"
     done
+fi
+
+if [ $WIRE_AGENTS = true ]; then
+    log_purple "##########################################"
+    log_purple "######### wiring agent plugins ###########"
+    log_purple "##########################################\n"
+    install/agents.sh
 fi
 
 if [ $INSTALL_WALLPAPERS_AND_SPLASHSCREEN = true ]; then

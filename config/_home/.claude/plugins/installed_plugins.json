@@ -26,9 +26,9 @@
         "scope": "user",
         "installPath": "/home/marcos/.claude/plugins/cache/pstack-claude/pstack/0.9.13",
         "version": "0.9.13",
-        "installedAt": "2026-08-26T22:21:41.295Z",
-        "lastUpdated": "2026-08-26T22:21:41.295Z",
-        "gitCommitSha": "c42e947d417f9e3f10bc59d54b05be744737f4f2"
+        "installedAt": "2026-09-11T04:25:19.268Z",
+        "lastUpdated": "2026-09-11T04:25:19.268Z",
+        "gitCommitSha": "15e267f4f8d3bd572b08437dda5b288f5d55aeac"
       }
     ]
   }

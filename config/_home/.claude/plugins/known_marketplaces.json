@@ -1,0 +1,26 @@
+{
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "/home/marcos/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-09-10T23:43:09.618Z"
+  },
+  "rize-plugins": {
+    "source": {
+      "source": "github",
+      "repo": "rizeedu/claude-plugins"
+    },
+    "installLocation": "/home/marcos/.claude/plugins/marketplaces/rize-plugins",
+    "lastUpdated": "2026-09-10T22:05:52.256Z"
+  },
+  "pstack-claude": {
+    "source": {
+      "source": "directory",
+      "path": "/home/marcos/code/march/agents/pstack-claude"
+    },
+    "installLocation": "/home/marcos/code/march/agents/pstack-claude",
+    "lastUpdated": "2026-09-11T04:25:05.579Z"
+  }
+}

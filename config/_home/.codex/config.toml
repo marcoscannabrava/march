@@ -77,6 +77,13 @@ trust_level = "trusted"
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4
 
+[plugins."pstack@pstack-claude"]
+enabled = true
+
+[marketplaces.pstack-claude]
+source_type = "local"
+source = "/home/marcos/code/march/agents/pstack-claude"
+
 [mcp_servers.sentry]
 command = "npx"
 args = ["-y", "mcp-remote@latest", "https://mcp.sentry.dev/mcp"]

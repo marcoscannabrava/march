@@ -8,8 +8,9 @@ the README does not: how to work in the repo without breaking the machine it con
 
 ## This repo is the live machine
 
-`./install.sh -s` symlinks `config/`, `scripts/`, `sounds/`, and the Claude skills into `$HOME`
-and `/usr/local/lib/march`. The links point back here, so **editing a versioned file changes the
+`./install.sh -s` symlinks `config/`, `scripts/`, and `sounds/` into `$HOME` and
+`/usr/local/lib/march`. `./install.sh -a` wires the vendored pstack plugin (`agents/pstack-claude/`)
+into claude, codex, and pi. The links point back here, so **editing a versioned file changes the
 running system at once**. There is no deploy step.
 
 - Edit an already-linked file → the change is live. Reload the affected program (below).
@@ -44,6 +45,7 @@ For behavior, run the real thing: `timer 5s`, `/usr/local/lib/march/backup --dry
 | `config/omarchy/plugins/**/*.qml`, `shell.json` | `omarchy-restart-shell` — QML is cached per path |
 | `config/zsh/*`, `config/_home/.zshrc` | new shell, or `source ~/.zshrc` |
 | `install/keymap.keyd.conf` | `./install.sh -k` |
+| `agents/pstack-claude/` | pi: live at once. claude: `claude plugin update pstack@pstack-claude`. codex: `codex plugin remove pstack && codex plugin add pstack@pstack-claude` |
 
 ## Conventions
 
