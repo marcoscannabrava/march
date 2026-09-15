@@ -33,7 +33,7 @@
   "hooks": {
     "Notification": [
       {
-        "matcher": "",
+        "matcher": "permission_prompt|worker_permission_prompt|idle_prompt|elicitation_dialog|elicitation_url_dialog|agent_needs_input",
         "hooks": [
           {
             "type": "command",
@@ -86,6 +86,9 @@
       "effortLevel": "xhigh"
     },
     "claude-opus-5": {
+      "effortLevel": "high"
+    },
+    "claude-fable-5-1": {
       "effortLevel": "high"
     }
   },

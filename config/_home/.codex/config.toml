@@ -1,7 +1,7 @@
 notify = ["/home/marcos/.codex/bin/codex-notify"]
 personality = "pragmatic"
-model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "low"
 approvals_reviewer = "auto_review"
 plan_mode_reasoning_effort = "high"
 [projects."/home/marcos/code/loancrate-dev/loancrate"]
@@ -72,6 +72,12 @@ trust_level = "trusted"
 
 [notice.model_migrations]
 "gpt-5.2-codex" = "gpt-5.3-codex"
+
+[hooks.state]
+
+[hooks.state."pstack@pstack-claude:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:62acbaff2b2f55f41971e21a164990aaa53c96919baa0a5eae2eb5db73b9e6e6"
+enabled = true
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
