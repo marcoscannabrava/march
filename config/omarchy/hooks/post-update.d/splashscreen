@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# The omarchy package resets the plymouth theme on update.
+REPO_DIR="$(dirname "$(dirname "$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")")")"
+
+"$REPO_DIR/install/splashscreen.sh"
