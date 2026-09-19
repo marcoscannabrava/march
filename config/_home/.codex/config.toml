@@ -73,6 +73,9 @@ trust_level = "trusted"
 [projects."/home/marcos"]
 trust_level = "trusted"
 
+[projects."/home/marcos/code/rize/mono/infrastructure/apps/sci"]
+trust_level = "trusted"
+
 [notice.model_migrations]
 "gpt-5.2-codex" = "gpt-5.3-codex"
 
