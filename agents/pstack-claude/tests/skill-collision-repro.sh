@@ -7,9 +7,9 @@
 # where only the Codex symlink path reads them. The invariant here keeps a
 # future upstream sync from reintroducing plugins/pstack/commands/.
 #
-# This also enforces the static maintenance invariants from CHANGES.md: the
+# This also enforces the static maintenance invariants: the
 # principle-* leaf flags, version parity across the three manifests, and the
-# default model quad's identity across the panel skills and setup-pstack. The
+# absence of model slugs in skill bodies. The
 # static checks need no CLI; only the behavioral leg below does.
 #
 # Manual test: the behavioral leg needs the claude CLI and API access; one haiku call.
@@ -24,7 +24,7 @@ note() { printf '%s\n' "$*"; }
 # Every /pstack:<name> is served by the skill itself; a commands/ directory
 # reappearing (typically via an upstream sync) duplicates every slash-menu row.
 if [ -e "$repo/plugins/pstack/commands" ]; then
-  note "FAIL: plugins/pstack/commands/ exists; trampolines belong in .codex-plugin/prompts/ (see CHANGES 0.9.13)"
+  note "FAIL: plugins/pstack/commands/ exists; trampolines belong in .codex-plugin/prompts/"
   fail=1
 else
   note "ok: no plugins/pstack/commands/ directory"
@@ -92,47 +92,16 @@ else
   fail=1
 fi
 
-# Static invariant (CHANGES maintenance note): the default model quad is duplicated
-# verbatim across the four panel skills and the setup-pstack sheet, "kept grep-identical
-# when models change." Derive the canonical ordered quad from setup-pstack's arena-runners
-# row and assert every other copy matches, so a partial model bump fails here instead of
-# drifting silently. (This copy in the test is the assertion anchor; a single generated
-# source for the quad would retire all of them, this check included.)
-setup="$repo/plugins/pstack/skills/setup-pstack/SKILL.md"
-quad_of() { { grep -oE 'claude-[a-z0-9-]+' || true; } | tr '\n' ' ' | sed 's/ $//'; }
-canon_quad="$(grep -m1 '^arena runners:' "$setup" | quad_of || true)"
-quad_bad=""
-[ -n "$canon_quad" ] || quad_bad="could not read the canonical quad from $setup (arena runners row)"$'\n'
-# Anchor on the quad's last slug rather than a hard-coded one, so a model swap in
-# setup-pstack cannot leave this check hunting for a slug nobody ships any more.
-anchor="${canon_quad##* }"
-# arena, architect, and how each state the quad on one line; interrogate lists it
-# as one slug per row of its Reviewer A/B/C/D table (upstream #167).
-for name in arena architect how; do
-  skill="$repo/plugins/pstack/skills/$name/SKILL.md"
-  n="$(grep -Fc "$anchor" "$skill" || true)"
-  if [ "$n" != "1" ]; then
-    quad_bad="$quad_bad$skill: expected exactly 1 default-quad line, found $n"$'\n'
-    continue
-  fi
-  got="$(grep -F "$anchor" "$skill" | quad_of)"
-  [ "$got" = "$canon_quad" ] || quad_bad="$quad_bad$skill: [$got] != [$canon_quad]"$'\n'
-done
-interrogate="$repo/plugins/pstack/skills/interrogate/SKILL.md"
-got="$(grep -E '^\| Reviewer [A-Z] \|' "$interrogate" | quad_of)"
-[ "$got" = "$canon_quad" ] || quad_bad="$quad_bad$interrogate reviewer table: [$got] != [$canon_quad]"$'\n'
-# The setup-pstack role rows must all carry the same quad (excludes the line 24
-# "currently available" enumeration, which is a different, longer list by design).
-while IFS= read -r line; do
-  got="$(printf '%s\n' "$line" | quad_of)"
-  [ "$got" = "$canon_quad" ] || quad_bad="$quad_bad$setup role row: [$got] != [$canon_quad]"$'\n'
-done < <(grep -E '^(arena runners|architect runners|interrogate reviewers|how critics):' "$setup")
-if [ -n "$quad_bad" ]; then
-  note "FAIL: the default model quad is not identical across the panel skills and setup-pstack:"
-  note "$quad_bad"
+# Static invariant: skills name no model. Every subagent runs on
+# the parent session's model, so a slug in a skill body is drift.
+slugs="$(grep -rnoE 'claude-(opus|fable|sonnet|haiku)[a-z0-9-]*|gpt-[0-9][a-z0-9.-]*' \
+  "$repo/plugins/pstack/skills" "$repo/plugins/pstack/agents" "$repo/plugins/pstack/hooks" || true)"
+if [ -n "$slugs" ]; then
+  note "FAIL: skills name a model slug:"
+  note "$slugs"
   fail=1
 else
-  note "ok: default model quad identical across 4 panel skills + setup-pstack ($canon_quad)"
+  note "ok: no skill names a model slug"
 fi
 
 # Behavioral leg: a command-less plugin still serves the user-typed /plugin:name

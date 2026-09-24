@@ -20,7 +20,7 @@
 
 [alias]
   stat = !git --no-pager diff --stat
-  c = !git add -A && git commit -m
+  c = "!f() { git add -A && git commit -m \"$*\"; }; f"
   amend = !git add -A && git commit --amend --no-edit
   
   # Clean merged branches

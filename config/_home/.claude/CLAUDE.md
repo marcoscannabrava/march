@@ -1,5 +1,3 @@
-@~/.claude/pstack-models.md
-
 # Voice and Style
 Comment blocks are <= 7 words, function names <= 4 words. User-facing message strings should be <= 10 words. Use an active voice, no stage performances, and pick the most common word when choosing among alternatives.
 

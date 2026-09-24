@@ -32,8 +32,8 @@ VS Code settings and keybindings live in the private dotfiles repo, not here.
 
 ## agent plugins (pstack)
 
-`agents/pstack-claude/` vendors [pstack](https://github.com/michael-denyer/pstack-claude) (~50
-workflow skills: `why`, `how`, `interrogate`, `swarm`, …) as the single source of truth, and
+`agents/pstack-claude/` vendors [pstack](https://github.com/michael-denyer/pstack-claude) (~30
+workflow skills: `why`, `how`, `interrogate`, `arena`, …) as the single source of truth, and
 `./install.sh -a` wires it natively into all three agents:
 
 - **Claude**: local marketplace (`claude plugin marketplace add`), declared in
