@@ -19,6 +19,9 @@ export FZF_BASE=/usr/bin/fzf
 
 # Actually load Oh-My-Zsh
 source "${ZSH}/oh-my-zsh.sh"
+
+# Readable comments at the prompt
+ZSH_HIGHLIGHT_STYLES[comment]='fg=7'
 # unalias rm # No interactive rm by default (brought by plugins/common-aliases)
 
 # Prevent Homebrew from reporting - https://github.com/Homebrew/brew/blob/master/share/doc/homebrew/Analytics.md

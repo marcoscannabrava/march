@@ -1,7 +1,7 @@
 notify = ["/home/marcos/.codex/bin/codex-notify"]
 personality = "pragmatic"
-model = "gpt-5.6-luna"
-model_reasoning_effort = "low"
+model = "gpt-6-luna"
+model_reasoning_effort = "medium"
 approvals_reviewer = "auto_review"
 plan_mode_reasoning_effort = "high"
 [projects."/home/marcos/code/loancrate-dev/loancrate"]
@@ -79,8 +79,12 @@ trust_level = "trusted"
 [projects."/home/marcos/code/rize/wt/full-demo-env/reset1"]
 trust_level = "trusted"
 
+[projects."/home/marcos/code/rize/wt/mono/demo/apps/demo-reset"]
+trust_level = "trusted"
+
 [notice.model_migrations]
 "gpt-5.2-codex" = "gpt-5.3-codex"
+"gpt-5.6-luna" = "gpt-6-luna"
 
 [hooks.state]
 
@@ -109,3 +113,4 @@ notification_condition = "unfocused"
 notification_method = "bel"
 status_line = ["model-with-reasoning", "current-dir", "thread-name", "context-window-size", "used-tokens", "task-progress"]
 status_line_use_colors = true
+screen_reader_detection_done = true
