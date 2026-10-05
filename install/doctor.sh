@@ -54,6 +54,10 @@ done
 
 echo "== agents (pstack) =="
 check_link agents/pstack-claude/plugins/pstack/skills "$HOME/.pi/agent/skills/pstack"
+for skill in agents/skills/*/; do
+    skill="${skill%/}"
+    check_link "$skill" "$HOME/.claude/skills/$(basename "$skill")"
+done
 for json in \
     config/_home/.claude/plugins/known_marketplaces.json \
     config/_home/.claude/settings.json \

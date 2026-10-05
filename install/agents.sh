@@ -76,6 +76,12 @@ fi
 log_purple "########## pi ############"
 ensure_link "$PSTACK_SKILLS" "$HOME/.pi/agent/skills/pstack"
 
+log_purple "##### own skills #########"
+for skill in "$REPO_DIR"/agents/skills/*/; do
+    skill="${skill%/}"
+    ensure_link "$skill" "$HOME/.claude/skills/$(basename "$skill")"
+done
+
 log_purple "###### stale cleanup #####"
 # One-time: drop symlinks into the claude/ tree removed in 4232bf0.
 if [ -d "$HOME/.claude/skills" ]; then

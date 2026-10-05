@@ -82,6 +82,12 @@ trust_level = "trusted"
 [projects."/home/marcos/code/rize/wt/mono/demo/apps/demo-reset"]
 trust_level = "trusted"
 
+[projects."/home/marcos/code/rize/mono/infrastructure/apps/canvas"]
+trust_level = "trusted"
+
+[projects."/home/marcos/code/avocode"]
+trust_level = "trusted"
+
 [notice.model_migrations]
 "gpt-5.2-codex" = "gpt-5.3-codex"
 "gpt-5.6-luna" = "gpt-6-luna"
@@ -91,10 +97,6 @@ trust_level = "trusted"
 [hooks.state."pstack@pstack-claude:hooks/hooks.json:session_start:0:0"]
 trusted_hash = "sha256:62acbaff2b2f55f41971e21a164990aaa53c96919baa0a5eae2eb5db73b9e6e6"
 enabled = true
-
-[tui.model_availability_nux]
-"gpt-5.5" = 4
-"gpt-5.6-sol" = 4
 
 [plugins."pstack@pstack-claude"]
 enabled = true
@@ -114,3 +116,8 @@ notification_method = "bel"
 status_line = ["model-with-reasoning", "current-dir", "thread-name", "context-window-size", "used-tokens", "task-progress"]
 status_line_use_colors = true
 screen_reader_detection_done = true
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+"gpt-5.6-sol" = 4
+"gpt-6.1-sol" = 2

@@ -5,7 +5,7 @@ alias python=python3
 
 # Show git aliases from oh-my-zsh git plugin
 alias gitaliases='less ~/.oh-my-zsh/plugins/git/README.md'
-alias aliases='nvim ~/.config/zsh/.aliases'
+alias aliases='micro ~/.config/zsh/.aliases'
 
 # Override oh-my-zsh git plugin gfa alias to fetch all and rebase current branch
 alias gfa='git fetch --all --tags --prune && git rebase; git checkout "$(git symbolic-ref refs/remotes/origin/HEAD | sed "s|^refs/remotes/origin/||")" && git rebase && git checkout -'

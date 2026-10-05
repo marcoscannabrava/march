@@ -20,6 +20,7 @@
 | `install.sh`, `install/` | the bootstrap command and its sub-steps |
 | `config/` | dotfiles symlinked into `$HOME`; `config/_home/*` keeps its subpath, the rest lands in `~/.config` |
 | `agents/` | vendored agent plugins (pstack) wired into claude, codex, and pi — see below |
+| `agents/skills/` | own claude skills, linked into `~/.claude/skills` by `./install.sh -a` |
 | `scripts/` | executables linked into `/usr/local/lib/march` and `~/.local/bin` |
 | `systemd/` | backup service and timer units — see [systemd/README.md](systemd/README.md) |
 | `branding/`, `wallpapers/`, `sounds/`, `webapps/` | assets the installers copy or link |
