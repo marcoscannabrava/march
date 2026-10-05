@@ -28,13 +28,12 @@ Every design element (class, method, parameter, layer, setting, exception) adds 
 
 - When you change code, do not make the smallest possible change. After the change, the code must look as if the design included it from the start.
 - Fix design problems when you find them. If a deadline forces a hack, say so and name the cleanup.
-- Solve today's problems. Do not build for "what if" cases (speculative generality). General shape is good (principle 4); unused hooks, parameters, and subclasses are not.
+- Solve today's problems. Do not build for "what if" cases (speculative generality).
 
 ### 2. Make modules deep
 
 - A deep module has a simple interface and a large implementation. Unix file I/O is the model: five calls hide a huge system.
-- Every class and method must pull its weight. Collapse a class that does too little (lazy class) into its user.
-- Do not split code into many tiny classes or functions ("classitis"). Each new interface costs the reader. If one task needs five classes, consolidate (solution sprawl).
+- Do not split code into many tiny classes or functions ("classitis"). Each new interface costs the reader. Collapse a class that does too little into its user (lazy class, solution sprawl).
 - Make the common case simple to use. Do not force callers to learn rare features to use common ones.
 - The interface must differ from the implementation. If they match, the module is shallow.
 
@@ -49,7 +48,6 @@ Every design element (class, method, parameter, layer, setting, exception) adds 
 
 ### 4. Make modules somewhat general-purpose
 
-- Build for current needs, but give the interface a general shape.
 - Ask: what is the simplest interface that covers all current needs?
 - If several special methods do one job, merge them into one.
 - Ask: is this API easy for my current need? If not, it is too general or wrong.
@@ -59,20 +57,17 @@ Every design element (class, method, parameter, layer, setting, exception) adds 
 ### 5. Give each layer a different abstraction
 
 - Remove pass-through methods. A class that only delegates is a middle man. Expose the lower layer, move the duty, or merge the classes.
-- Use decorators and wrappers with care. They are often shallow.
 - Duplicate signatures are OK only when each method adds real function, such as a dispatcher or several implementations of one interface.
 
 ### 6. Pull complexity down
 
 - A simple interface matters more than a simple implementation.
-- Take extra work on yourself to save work for your callers.
 - Do not "punt" hard problems to callers through exceptions or settings.
 - Before you add a setting, ask: can the caller pick a better value than this module can? If not, compute it here. If you must add one, give it a good default.
 - Stop when pulling down adds unrelated logic or leaks information.
 
 ### 7. Put code where its knowledge lives
 
-- Join code when it makes the interface simpler.
 - Move a method to the class whose data it uses most (feature envy).
 - Put data and the logic that uses it together. A class that only holds fields, with logic spread among callers, leaks its format (data class).
 - Group values that always travel together into one type (data clumps). Give rich domain values their own type instead of loose strings and ints (primitive obsession). This also shortens long parameter lists.
@@ -106,9 +101,9 @@ Every design element (class, method, parameter, layer, setting, exception) adds 
 
 ### 11. Design it twice
 
-- Your first idea is rarely the best.
 - Sketch two or more very different designs. Focus on the interface.
 - List pros and cons. Rank ease of use for callers first.
+- Write the interface and its comment before the bodies.
 
 ### 12. Choose precise names
 
@@ -117,7 +112,6 @@ Every design element (class, method, parameter, layer, setting, exception) adds 
 - Avoid names that look alike: `socket` and `sock`.
 - Use one name for one concept everywhere. Pair names: `open`/`close`, `start`/`stop`.
 - Remove words that add nothing: `object`, `field`, the class name inside the class, the type inside the name (`userList`, `getNameString`).
-- If a good name is hard to find, the design is unclear. Fix the design.
 
 ### 13. Write comments that add facts the code cannot show
 
@@ -129,28 +123,21 @@ Every design element (class, method, parameter, layer, setting, exception) adds 
 - Put design decisions that span modules in one central place. Point to it from the code.
 - Follow the repository's comment conventions when they are stricter than these rules.
 
-### 14. Write the interface first
-
-- For a new module, write the interface comment and method signatures before the bodies.
-- Revise until the structure feels right. Then write the bodies.
-
-### 15. Be consistent and obvious
+### 14. Be consistent and obvious
 
 - Do not change a convention unless the new one is much better and you update all old uses.
 - Do not force consistency onto things that are different.
-- Code is obvious when a reader's first guess is correct. If a reviewer finds code unclear, it is unclear.
+- Code is obvious when a reader's first guess is correct.
 - Avoid generic containers (`Pair`, tuples) for domain data, and hidden control flow, unless you document them.
 
-### 16. Delete dead weight
+### 15. Delete dead weight
 
 - Delete unused code, parameters, fields, and branches. Source control keeps the history.
 - Remove optional fields that only some code paths set (temporary field). Pass the values the callee needs, not a large object it picks one field from.
 
-### 17. Test and measure
+### 16. Test and measure
 
 - For bug fixes, write a failing test first, then fix.
-- Do not let test-first steps replace design. Design the abstraction, then test it.
-- Simple code is usually fast.
 - If a speedup complicates an interface, start simple and optimize later.
 - Measure before and after each optimization. If it does not help, revert it.
 
@@ -169,8 +156,7 @@ Stop and redesign when you see one of these.
 | Special-general mixture | General code holds special cases. | Push special code up or down. |
 | Conjoined methods | You cannot read one method without another. | Join them. |
 | Feature envy | A method mostly uses another class's data. | Move the method. |
-| Data clumps / primitive obsession | Loose values travel together. | Make a type. |
-| Long parameter list | Many arguments, often passed through. | Make a type or move the logic. |
+| Data clumps / long parameter list | Loose values travel together. | Make a type. |
 | Shotgun surgery | One change edits many classes. | Gather the knowledge. |
 | Divergent change / large class | One class changes for unrelated reasons. | Split by reason. |
 | Message chain | `a.b().c().d()` to reach data. | Hide the path behind one method. |
@@ -179,7 +165,6 @@ Stop and redesign when you see one of these.
 | Speculative generality | Hooks or parameters with no current user. | Delete them. |
 | Dead code / temporary field | Unused code, or fields set on some paths only. | Delete or restructure. |
 | Comment repeats code | The comment tells only what the code shows. | Delete or say why. |
-| Implementation in interface docs | Interface comment explains how. | Describe what and when. |
 | Vague or type-embedded name | The name hides meaning or encodes a type. | Rename precisely. |
 | Hard to pick name / hard to describe | You cannot name or briefly explain it. | Redesign. |
 | Nonobvious code | A reader cannot quickly predict behavior. | Clarify, then comment. |
