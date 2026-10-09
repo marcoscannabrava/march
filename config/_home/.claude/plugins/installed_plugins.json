@@ -14,21 +14,11 @@
     "rize-skills@rize-plugins": [
       {
         "scope": "managed",
-        "installPath": "/home/marcos/.claude/plugins/cache/rize-plugins/rize-skills/9d5175f24b7f",
-        "version": "9d5175f24b7f",
+        "installPath": "/home/marcos/.claude/plugins/cache/rize-plugins/rize-skills/fbf3b109089e",
+        "version": "fbf3b109089e",
         "installedAt": "2026-08-24T12:27:40.530Z",
-        "lastUpdated": "2026-08-24T12:27:40.530Z",
-        "gitCommitSha": "9d5175f24b7f1d9c279354c2a9d974ffbedb5cd6"
-      }
-    ],
-    "pstack@pstack-claude": [
-      {
-        "scope": "user",
-        "installPath": "/home/marcos/.claude/plugins/cache/pstack-claude/pstack/0.9.13",
-        "version": "0.9.13",
-        "installedAt": "2026-09-11T04:25:19.268Z",
-        "lastUpdated": "2026-09-11T04:25:19.268Z",
-        "gitCommitSha": "15e267f4f8d3bd572b08437dda5b288f5d55aeac"
+        "lastUpdated": "2026-09-18T20:04:33.013Z",
+        "gitCommitSha": "fbf3b109089e771fc575be866ff40bf8db7df9ca"
       }
     ]
   }

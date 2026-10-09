@@ -38,9 +38,9 @@ usage() {
     echo "  -s, --symlink        Symlink dotfiles"
     echo "  -w, --wallpapers     Install wallpapers and splashscreen"
     echo "  -k, --keymap         Install keymap configuration"
-    echo "  -a, --agents         Wire the vendored pstack plugin into claude, codex, and pi"
+    echo "  -a, --agents         Link own claude skills"
     echo ""
-    echo "Example: $0 -pswka # installs packages, symlinks files, wallpapers, keymap, and agent plugins"
+    echo "Example: $0 -pswka # installs packages, symlinks files, wallpapers, keymap, and agent skills"
     echo ""
     echo "Check machine drift with: install/doctor.sh"
     exit 0
@@ -78,7 +78,7 @@ while getopts "poswkah" option; do
             INSTALL_KEYMAP=true
             ;;
         a)
-            log_purple "-agents: wiring agent plugins...\n\n"
+            log_purple "-agents: linking agent skills...\n\n"
             WIRE_AGENTS=true
             ;;
         h|*)
@@ -177,7 +177,7 @@ fi
 
 if [ $WIRE_AGENTS = true ]; then
     log_purple "##########################################"
-    log_purple "######### wiring agent plugins ###########"
+    log_purple "######### linking agent skills ###########"
     log_purple "##########################################\n"
     install/agents.sh
 fi

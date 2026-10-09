@@ -94,17 +94,6 @@ trust_level = "trusted"
 
 [hooks.state]
 
-[hooks.state."pstack@pstack-claude:hooks/hooks.json:session_start:0:0"]
-trusted_hash = "sha256:62acbaff2b2f55f41971e21a164990aaa53c96919baa0a5eae2eb5db73b9e6e6"
-enabled = true
-
-[plugins."pstack@pstack-claude"]
-enabled = true
-
-[marketplaces.pstack-claude]
-source_type = "local"
-source = "/home/marcos/code/march/agents/pstack-claude"
-
 [mcp_servers.sentry]
 command = "npx"
 args = ["-y", "mcp-remote@latest", "https://mcp.sentry.dev/mcp"]
@@ -120,4 +109,4 @@ screen_reader_detection_done = true
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4
-"gpt-6.1-sol" = 2
+"gpt-6.1-sol" = 4
