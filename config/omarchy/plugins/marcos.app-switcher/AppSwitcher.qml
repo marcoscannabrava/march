@@ -11,6 +11,10 @@ Item {
 
   property bool opened: false
   property string filterText: ""
+  // Ctrl+R swaps the filter for a workspace title.
+  property bool renaming: false
+  property string renameText: ""
+  property int renameId: 0
   property int selectedIndex: -1
   // Summed from the model so the card sizes without waiting on the ListView.
   property int rowsHeight: 0
@@ -38,6 +42,7 @@ Item {
   function open(payloadJson) {
     root.opened = true
     root.filterText = ""
+    root.renaming = false
     root.selectedIndex = -1
     root.disarmPointer()
     Hyprland.refreshWorkspaces()
@@ -70,7 +75,7 @@ Item {
     if (name.length === 0) return "Workspace " + workspace.id
     if (name.indexOf("special:") === 0) return "Special · " + name.slice(8)
     if (name === String(workspace.id)) return "Workspace " + name
-    return name
+    return workspace.id + " · " + name
   }
 
   function windowClass(toplevel) {
@@ -109,7 +114,7 @@ Item {
       var workspace = toplevel.workspace
       var key = workspace ? workspace.id : 0
       if (!groups[key]) {
-        groups[key] = { label: root.groupLabel(workspace), windows: [] }
+        groups[key] = { label: root.groupLabel(workspace), workspaceId: key, windows: [] }
         keys.push(key)
       }
 
@@ -138,6 +143,7 @@ Item {
         title: "",
         icon: "",
         address: "",
+        workspaceId: group.workspaceId,
         focused: false,
         count: group.windows.length
       })
@@ -150,6 +156,7 @@ Item {
           title: entry.appClass ? entry.title : "",
           icon: root.iconFor(entry.appClass),
           address: entry.address,
+          workspaceId: group.workspaceId,
           focused: entry.focused,
           count: 0
         })
@@ -210,6 +217,44 @@ Item {
     root.selectStep(1)
   }
 
+  // Selected row's workspace, else the focused one.
+  function startRename() {
+    var id = root.selectedIndex >= 0
+      ? rowModel.get(root.selectedIndex).workspaceId
+      : (Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id : 0)
+    if (id <= 0) return
+
+    var workspace = null
+    var values = Hyprland.workspaces.values
+    for (var i = 0; i < values.length; i++)
+      if (values[i].id === id) workspace = values[i]
+
+    var name = workspace ? String(workspace.name || "") : ""
+    root.renameId = id
+    root.renameText = name === String(id) ? "" : name
+    root.renaming = true
+  }
+
+  // Empty title resets the name to the id.
+  function applyRename() {
+    var name = root.renameText.trim() || String(root.renameId)
+    var quoted = '"' + name.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"'
+    Hyprland.dispatch('hl.dsp.workspace.rename({ workspace = "' + root.renameId + '", name = ' + quoted + ' })')
+    root.renaming = false
+  }
+
+  function renameKey(event) {
+    if (event.key === Qt.Key_Escape) {
+      root.renaming = false
+    } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+      root.applyRename()
+    } else if (Util.editsFilter(event, root.renameText)) {
+      root.renameText = Util.editedFilter(event, root.renameText)
+    } else if (event.text && event.text.length === 1 && event.text.charCodeAt(0) >= 32 && event.text.charCodeAt(0) !== 127) {
+      root.renameText += event.text
+    }
+  }
+
   function disarmPointer() {
     pointerGate.reset()
   }
@@ -247,6 +292,14 @@ Item {
   Connections {
     target: Hyprland.toplevels
     function onValuesChanged() { if (root.opened) root.rebuildRows() }
+  }
+
+  // Group headers follow workspace renames.
+  Connections {
+    target: Hyprland
+    function onRawEvent(event) {
+      if (root.opened && event && String(event.name) === "renameworkspace") root.rebuildRows()
+    }
   }
 
   PanelWindow {
@@ -290,7 +343,13 @@ Item {
 
         Keys.priority: Keys.BeforeItem
         Keys.onPressed: function(event) {
-          if (event.key === Qt.Key_Escape) {
+          if (root.renaming) {
+            root.renameKey(event)
+            event.accepted = true
+          } else if (event.key === Qt.Key_R && event.modifiers === Qt.ControlModifier) {
+            root.startRename()
+            event.accepted = true
+          } else if (event.key === Qt.Key_Escape) {
             if (root.filterText) root.setFilter("")
             else root.close()
             event.accepted = true
@@ -330,9 +389,11 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            text: root.filterText || "Windows by workspace"
+            text: root.renaming
+              ? (root.renameText || "Workspace " + root.renameId + " title")
+              : (root.filterText || "Windows by workspace · Ctrl+R rename")
             color: root.foreground
-            opacity: root.filterText ? 1 : 0.58
+            opacity: (root.renaming ? root.renameText : root.filterText) ? 1 : 0.58
             font.family: root.fontFamily
             font.pixelSize: Style.font.heading
             elide: Text.ElideRight

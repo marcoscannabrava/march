@@ -116,13 +116,23 @@ BarWidget {
 
   readonly property real trailingGap: root.vertical ? 0 : Style.spaceReal(1.5)
 
-  implicitWidth: grid.implicitWidth + trailingGap
+  // Focused workspace's custom name, on its own screen.
+  readonly property string activeTitle: {
+    var workspace = Hyprland.focusedWorkspace
+    if (root.vertical || !workspace) return ""
+    if (root.workspaceIds().indexOf(workspace.id) === -1) return ""
+    var name = String(workspace.name || "")
+    return name === String(workspace.id) ? "" : name
+  }
+
+  implicitWidth: grid.implicitWidth + trailingGap + (titleLabel.visible ? titleLabel.width + Style.space(4) : 0)
   implicitHeight: grid.implicitHeight
 
   GridLayout {
     id: grid
-    anchors.fill: parent
-    anchors.rightMargin: root.trailingGap
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
     columns: root.vertical ? 1 : Math.max(1, root.workspaceIds().length)
     columnSpacing: root.vertical ? 0 : Style.space(1)
     rowSpacing: root.vertical ? Style.space(2) : 0
@@ -147,5 +157,20 @@ BarWidget {
         onPressed: function() { root.focusWorkspace(modelData) }
       }
     }
+  }
+
+  Text {
+    id: titleLabel
+    visible: root.activeTitle.length > 0
+    anchors.left: grid.right
+    anchors.leftMargin: Style.space(4)
+    anchors.verticalCenter: parent.verticalCenter
+    width: Math.min(implicitWidth, Style.space(160))
+    text: root.activeTitle
+    textFormat: Text.PlainText
+    elide: Text.ElideRight
+    color: root.bar ? root.bar.barForeground : Color.bar.text
+    font.family: root.bar ? root.bar.fontFamily : Style.font.family
+    font.pixelSize: Style.font.body
   }
 }
