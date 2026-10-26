@@ -144,8 +144,7 @@ Item {
         icon: "",
         address: "",
         workspaceId: group.workspaceId,
-        focused: false,
-        count: group.windows.length
+        focused: false
       })
 
       for (var w = 0; w < group.windows.length; w++) {
@@ -157,8 +156,7 @@ Item {
           icon: root.iconFor(entry.appClass),
           address: entry.address,
           workspaceId: group.workspaceId,
-          focused: entry.focused,
-          count: 0
+          focused: entry.focused
         })
       }
     }
@@ -420,7 +418,6 @@ Item {
               required property string title
               required property string icon
               required property bool focused
-              required property int count
 
               readonly property bool isWindow: kind === "window"
               readonly property bool hasCursor: row.isWindow && row.index === root.selectedIndex
@@ -433,7 +430,7 @@ Item {
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: Style.space(4)
-                text: row.label + "  ·  " + row.count
+                text: row.label
                 foreground: root.foreground
                 fontFamily: root.fontFamily
               }

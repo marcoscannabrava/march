@@ -125,7 +125,7 @@ BarWidget {
     return name === String(workspace.id) ? "" : name
   }
 
-  implicitWidth: grid.implicitWidth + trailingGap + (titleLabel.visible ? titleLabel.width + Style.space(4) : 0)
+  implicitWidth: grid.implicitWidth + trailingGap + (titleLabel.visible ? titleLabel.width + Style.space(12) : 0)
   implicitHeight: grid.implicitHeight
 
   GridLayout {
@@ -163,9 +163,9 @@ BarWidget {
     id: titleLabel
     visible: root.activeTitle.length > 0
     anchors.left: grid.right
-    anchors.leftMargin: Style.space(4)
+    anchors.leftMargin: Style.space(12)
     anchors.verticalCenter: parent.verticalCenter
-    width: Math.min(implicitWidth, Style.space(160))
+    width: Math.min(implicitWidth, Style.space(400))
     text: root.activeTitle
     textFormat: Text.PlainText
     elide: Text.ElideRight
