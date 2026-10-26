@@ -67,3 +67,9 @@
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://git.heroku.com"]
 	helper = !heroku git:credentials
+[diff]
+	tool = vscode
+[difftool "vscode"]
+	cmd = code --wait --diff \"$LOCAL\" \"$REMOTE\"
+[difftool]
+	prompt = false
