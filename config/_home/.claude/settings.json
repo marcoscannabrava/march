@@ -30,6 +30,10 @@
     "defaultMode": "auto"
   },
   "model": "opus",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
   "hooks": {
     "Notification": [
       {
