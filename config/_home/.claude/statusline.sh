@@ -13,4 +13,8 @@ IFS=$'\t' read -r model effort thinking used cwd < <(jq -r '[
 
 [ "$thinking" = "true" ] && effort="$effort +think"
 
-printf '%s · %s · %s%% ctx · %s' "$model" "$effort" "$used" "${cwd/#$HOME/\~}"
+# Show branch only inside a repo.
+branch=$(git -C "$cwd" --no-optional-locks branch --show-current 2>/dev/null)
+[ -n "$branch" ] && branch=" ($branch)"
+
+printf '%s · %s · %s%% ctx · %s%s' "$model" "$effort" "$used" "${cwd/#$HOME/\~}" "$branch"
