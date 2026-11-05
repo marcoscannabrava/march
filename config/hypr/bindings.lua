@@ -96,6 +96,10 @@ o.bind("SUPER + CTRL + ALT + LEFT", "Move window to previous workspace", slot_ac
 o.bind("SUPER + CTRL + ALT + DOWN", "Move window to empty workspace", slot_action(o.workspaces.move_window, first_empty_slot))
 
 -- Resize windows
+hl.unbind("SUPER + SHIFT + CTRL + RIGHT") -- was: move window to right monitor
+hl.unbind("SUPER + SHIFT + CTRL + LEFT") -- was: move window to left monitor
+hl.unbind("SUPER + SHIFT + CTRL + UP") -- was: move window to up monitor
+hl.unbind("SUPER + SHIFT + CTRL + DOWN") -- was: move window to down monitor
 o.bind("SUPER + SHIFT + CTRL + RIGHT", "Expand window right", hl.dsp.window.resize({ x = 30, y = 0, relative = true }), { repeating = true })
 o.bind("SUPER + SHIFT + CTRL + LEFT", "Shrink window left", hl.dsp.window.resize({ x = -30, y = 0, relative = true }), { repeating = true })
 o.bind("SUPER + SHIFT + CTRL + UP", "Shrink window up", hl.dsp.window.resize({ x = 0, y = -30, relative = true }), { repeating = true })
