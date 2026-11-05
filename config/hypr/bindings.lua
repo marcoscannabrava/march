@@ -41,28 +41,59 @@ o.bind("SUPER + F", "Toggle window floating/tiling", hl.dsp.window.float({ actio
 hl.unbind("SUPER + L") -- was: toggle workspace layout
 o.bind("SUPER + L", "Lock screen", "omarchy-system-lock")
 
--- Extra workspaces 11 and 12
-hl.unbind("SUPER + code:20") -- was: expand window left
-hl.unbind("SUPER + SHIFT + code:20") -- was: shrink window up
-o.bind("SUPER + code:20", "Switch to workspace 11", hl.dsp.focus({ workspace = "11" }))
-o.bind("SUPER + SHIFT + code:20", "Move window silently to workspace 11", hl.dsp.window.move({ workspace = "11", follow = false }))
-hl.unbind("SUPER + code:21") -- was: shrink window left
-hl.unbind("SUPER + SHIFT + code:21") -- was: expand window down
-o.bind("SUPER + code:21", "Switch to workspace 12", hl.dsp.focus({ workspace = "12" }))
-o.bind("SUPER + SHIFT + code:21", "Move window silently to workspace 12", hl.dsp.window.move({ workspace = "12", follow = false }))
+-- "Minimize" = park on a special workspace
+o.bind("SUPER + CTRL + M", "Minimize window", hl.dsp.window.move({ workspace = "special:minimized", follow = false }))
 
--- "Minimize" = park on workspace 13
-o.bind("SUPER + CTRL + M", "Minimize window to workspace 13", hl.dsp.window.move({ workspace = "13", follow = false }))
+-- Slot of the active workspace, or nil
+local function active_slot()
+  local workspace = hl.get_active_workspace()
+  if not workspace or workspace.id <= 0 then
+    return nil
+  end
+  return (workspace.id - 1) % o.workspaces.slots + 1
+end
 
--- Relative workspace navigation
+-- Lowest slot with no workspace yet
+local function first_empty_slot()
+  local monitor = hl.get_active_monitor()
+  if not monitor then
+    return nil
+  end
+  for slot = 1, o.workspaces.slots do
+    if not hl.get_workspace(o.workspaces.workspace_id(monitor, slot)) then
+      return slot
+    end
+  end
+  return nil
+end
+
+-- Run action on slot, stay in block
+local function slot_action(action, pick, ...)
+  local args = { ... }
+  return function()
+    local slot = pick()
+    if slot and slot >= 1 and slot <= o.workspaces.slots then
+      action(slot, table.unpack(args))()
+    end
+  end
+end
+
+local function step(delta)
+  return function()
+    local slot = active_slot()
+    return slot and slot + delta
+  end
+end
+
+-- Relative navigation, inside the monitor's block
 hl.unbind("SUPER + CTRL + LEFT") -- was: grouped window focus left
 hl.unbind("SUPER + CTRL + RIGHT") -- was: grouped window focus right
-o.bind("SUPER + CTRL + RIGHT", "Next workspace", hl.dsp.focus({ workspace = "r+1" }))
-o.bind("SUPER + CTRL + LEFT", "Previous workspace", hl.dsp.focus({ workspace = "r-1" }))
-o.bind("SUPER + CTRL + DOWN", "First empty workspace", hl.dsp.focus({ workspace = "empty" }))
-o.bind("SUPER + CTRL + ALT + RIGHT", "Move window to next workspace", hl.dsp.window.move({ workspace = "r+1" }))
-o.bind("SUPER + CTRL + ALT + LEFT", "Move window to previous workspace", hl.dsp.window.move({ workspace = "r-1" }))
-o.bind("SUPER + CTRL + ALT + DOWN", "Move window to empty workspace", hl.dsp.window.move({ workspace = "empty" }))
+o.bind("SUPER + CTRL + RIGHT", "Next workspace", slot_action(o.workspaces.focus, step(1)))
+o.bind("SUPER + CTRL + LEFT", "Previous workspace", slot_action(o.workspaces.focus, step(-1)))
+o.bind("SUPER + CTRL + DOWN", "First empty workspace", slot_action(o.workspaces.focus, first_empty_slot))
+o.bind("SUPER + CTRL + ALT + RIGHT", "Move window to next workspace", slot_action(o.workspaces.move_window, step(1)))
+o.bind("SUPER + CTRL + ALT + LEFT", "Move window to previous workspace", slot_action(o.workspaces.move_window, step(-1)))
+o.bind("SUPER + CTRL + ALT + DOWN", "Move window to empty workspace", slot_action(o.workspaces.move_window, first_empty_slot))
 
 -- Resize windows
 o.bind("SUPER + SHIFT + CTRL + RIGHT", "Expand window right", hl.dsp.window.resize({ x = 30, y = 0, relative = true }), { repeating = true })
@@ -82,6 +113,3 @@ o.bind("SUPER + SHIFT + DOWN", "Move window down", hl.dsp.window.move({ directio
 
 -- Speech-to-text (hyprwhspr toggle mode)
 o.bind("SUPER + ALT + D", "Speech-to-text", "/usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record")
-
--- Workspace-to-monitor rules
-require("hypr.workspaces")

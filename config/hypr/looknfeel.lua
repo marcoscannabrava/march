@@ -51,3 +51,8 @@ o.window("org.gnome.clocks", { float = true, center = true, size = { 500, 500 } 
 
 -- Slack lives on workspace 10
 o.window("slack", { workspace = "10" })
+
+-- Opt another application in to Omarchy's standard transparency.
+-- Find its class with: hyprctl clients
+-- o.transparent_window("my-app")
+-- o.transparent_window("my-app", "0.9 0.85") -- Custom active/inactive opacity.

@@ -6,17 +6,47 @@ import Quickshell.Hyprland
 import qs.Commons
 import qs.Ui
 
-// Workspace indicators, filtered to the monitor this bar sits on.
+// Workspace indicators for this bar's monitor block.
 BarWidget {
   id: root
   moduleName: "marcos.workspaces"
 
-  // Workspace id -> monitor name, from Hyprland's workspace rules.
-  property var ruleMonitors: ({})
+  // Each monitor owns a block of ten.
+  readonly property int slots: 10
 
   readonly property string screenName: {
     var window = root.QsWindow ? root.QsWindow.window : null
     return window && window.screen ? String(window.screen.name || "") : ""
+  }
+
+  // Connector -> block, from Omarchy's state file.
+  property var blocks: ({})
+
+  function readBlocks(text) {
+    var next = {}
+    var lines = String(text || "").split("\n")
+    for (var i = 0; i < lines.length; i++) {
+      var fields = lines[i].split("\t")
+      if (fields.length >= 3 && fields[1] !== "") next[fields[1]] = parseInt(fields[0], 10)
+    }
+    root.blocks = next
+  }
+
+  FileView {
+    path: (Quickshell.env("XDG_STATE_HOME") || Quickshell.env("HOME") + "/.local/state") + "/omarchy/monitor-workspaces"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+    onLoaded: root.readBlocks(text())
+    onLoadFailed: root.readBlocks("")
+  }
+
+  function blockOf(id) {
+    return Math.floor((id - 1) / root.slots)
+  }
+
+  function slotOf(id) {
+    return (id - 1) % root.slots + 1
   }
 
   function workspaceById(id) {
@@ -28,90 +58,38 @@ BarWidget {
     return null
   }
 
-  // The monitor a live workspace currently sits on, which differs from its
-  // rule whenever the ruled output is unplugged.
-  function liveMonitor(id) {
-    var workspace = root.workspaceById(id)
-    var monitor = workspace ? workspace.monitor : null
-    return monitor ? String(monitor.name || "") : ""
+  // Before the file exists, use the shown workspace.
+  readonly property int block: {
+    var block = root.blocks[root.screenName]
+    if (block !== undefined) return block
+    var values = Hyprland.workspaces.values
+    for (var i = 0; i < values.length; i++) {
+      var workspace = values[i]
+      if (workspace.id > 0 && workspace.active && workspace.monitor
+          && String(workspace.monitor.name || "") === root.screenName) return root.blockOf(workspace.id)
+    }
+    return 0
   }
 
-  // Ruled for this screen, plus any ruled workspace displaced onto it. An
-  // unruled workspace (the minimize parking spot) stays out of every bar.
+  // Slots 1-5, plus any open higher slot.
   function workspaceIds() {
-    var ids = []
-    var screen = root.screenName
+    var base = root.block * root.slots
+    var ids = [base + 1, base + 2, base + 3, base + 4, base + 5]
+    var values = Hyprland.workspaces.values
 
-    for (var key in root.ruleMonitors) {
-      var id = parseInt(key, 10)
-      if (root.ruleMonitors[key] === screen || root.liveMonitor(id) === screen) ids.push(id)
+    for (var i = 0; i < values.length; i++) {
+      var id = values[i].id
+      if (id > 0 && root.blockOf(id) === root.block && ids.indexOf(id) === -1) ids.push(id)
     }
 
-    if (ids.length === 0) ids = root.liveIds()
     ids.sort(function(left, right) { return left - right })
     return ids
   }
 
-  // Fallback for a monitor no rule names: whatever is open on it, else 1-5.
-  function liveIds() {
-    var ids = []
-    var values = Hyprland.workspaces.values
-
-    for (var i = 0; i < values.length; i++) {
-      var workspace = values[i]
-      if (workspace.id <= 0) continue
-      var monitor = workspace.monitor
-      if (monitor && String(monitor.name || "") === root.screenName) ids.push(workspace.id)
-    }
-
-    return ids.length > 0 ? ids : [1, 2, 3, 4, 5]
-  }
-
   function focusWorkspace(id) {
     if (!root.bar) return
-    root.bar.run("hyprctl dispatch " + Util.shellQuote("hl.dsp.focus({ workspace = \"" + id + "\" })"))
-  }
-
-  function refreshRules() {
-    if (!rulesProc.running) rulesProc.running = true
-  }
-
-  Component.onCompleted: root.refreshRules()
-
-  // Rules only move when the Hyprland config reloads.
-  Connections {
-    target: Hyprland
-    function onRawEvent(event) {
-      if (event && String(event.name) === "configreloaded") root.refreshRules()
-    }
-  }
-
-  Process {
-    id: rulesProc
-    command: ["hyprctl", "-j", "workspacerules"]
-    stdout: StdioCollector {
-      waitForEnd: true
-      onStreamFinished: {
-        var listed
-        try {
-          listed = JSON.parse(text || "[]")
-        } catch (e) {
-          return
-        }
-
-        if (!Array.isArray(listed)) return
-
-        var mapped = ({})
-        for (var i = 0; i < listed.length; i++) {
-          var rule = listed[i]
-          var id = parseInt(rule.workspaceString, 10)
-          if (isNaN(id) || id <= 0 || !rule.monitor) continue
-          mapped[id] = String(rule.monitor)
-        }
-
-        root.ruleMonitors = mapped
-      }
-    }
+    var expression = "o.workspaces.focus(" + root.slotOf(id) + ", \"" + root.screenName + "\")"
+    root.bar.run("hyprctl dispatch " + Util.shellQuote(expression))
   }
 
   readonly property real trailingGap: root.vertical ? 0 : Style.spaceReal(1.5)
@@ -146,9 +124,10 @@ BarWidget {
         readonly property var workspace: root.workspaceById(modelData)
         readonly property bool occupied: workspace !== null && workspace.toplevels.values.length > 0
         readonly property bool focused: Hyprland.focusedWorkspace !== null && Hyprland.focusedWorkspace.id === modelData
+        readonly property int slot: root.slotOf(modelData)
 
         bar: root.bar
-        text: focused ? "󱓻" : String(modelData)
+        text: focused ? "󱓻" : (slot === root.slots ? "0" : String(slot))
         opacity: occupied || focused ? 1 : 0.5
         horizontalMargin: 6
         verticalPadding: 6

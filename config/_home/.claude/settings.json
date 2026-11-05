@@ -66,17 +66,6 @@
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
-  "enabledPlugins": {
-    "rize-skills@rize-plugins": true
-  },
-  "extraKnownMarketplaces": {
-    "rize-plugins": {
-      "source": {
-        "source": "directory",
-        "path": "/home/marcos/code/rize/claude-plugins"
-      }
-    }
-  },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
   "modelSettings": {
@@ -87,7 +76,7 @@
       "effortLevel": "medium"
     },
     "claude-fable-5-1": {
-      "effortLevel": "high"
+      "effortLevel": "medium"
     },
     "claude-opus-5-5": {
       "effortLevel": "medium"
