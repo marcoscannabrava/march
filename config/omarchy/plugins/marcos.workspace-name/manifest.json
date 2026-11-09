@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "marcos.workspace-name",
+  "name": "Workspace Name",
+  "version": "1.0.0",
+  "author": "Marcos Cannabrava",
+  "description": "Name of the shown workspace",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "WorkspaceName.qml"
+  },
+  "barWidget": {
+    "displayName": "Workspace Name",
+    "description": "Name of the shown workspace",
+    "category": "Compositor",
+    "allowMultiple": false,
+    "defaultSection": "left"
+  }
+}
