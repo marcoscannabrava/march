@@ -1,9 +1,7 @@
 -- Personal keybindings, loaded after Omarchy defaults.
 -- List current bindings: omarchy menu keybindings --print
 
--- Terminals
-hl.unbind("SUPER + ALT + RETURN") -- was: tmux Work session
-o.bind("SUPER + ALT + RETURN", "Tmux", "omarchy-launch-terminal tmux new")
+-- Terminal
 hl.unbind("SUPER + T") -- was: toggle floating
 o.bind("SUPER + T", "Terminal", { launch = "xdg-terminal-exec" })
 
@@ -23,19 +21,12 @@ o.bind("SUPER + SHIFT + W", "WhatsApp", { webapp = "https://web.whatsapp.com/", 
 
 -- Notifications
 o.bind_toggle("SUPER + M", "Toggle silencing notifications", "notification-silencing")
-o.bind("SUPER + ALT + M", "Dismiss all notifications", "omarchy-shell notifications dismissAll")
-
--- Power
--- SUPER + ESCAPE keeps the Omarchy default: omarchy-menu toggle system
 
 -- App switcher
 hl.unbind("SUPER + TAB") -- was: next workspace
 o.bind("SUPER + TAB", "App switcher", "omarchy-shell shell toggle marcos.app-switcher")
 
--- Window and session actions
-o.bind("SUPER + Q", "Close window", hl.dsp.window.close())
-o.bind("ALT + F4", "Close window", hl.dsp.window.close())
-o.bind("SUPER + DELETE", "Exit Hyprland", hl.dsp.exit())
+-- Windows
 hl.unbind("SUPER + F") -- was: full screen
 o.bind("SUPER + F", "Toggle window floating/tiling", hl.dsp.window.float({ action = "toggle" }))
 hl.unbind("SUPER + L") -- was: toggle workspace layout
@@ -94,6 +85,24 @@ o.bind("SUPER + CTRL + DOWN", "First empty workspace", slot_action(o.workspaces.
 o.bind("SUPER + CTRL + ALT + RIGHT", "Move window to next workspace", slot_action(o.workspaces.move_window, step(1)))
 o.bind("SUPER + CTRL + ALT + LEFT", "Move window to previous workspace", slot_action(o.workspaces.move_window, step(-1)))
 o.bind("SUPER + CTRL + ALT + DOWN", "Move window to empty workspace", slot_action(o.workspaces.move_window, first_empty_slot))
+
+-- Extra workspaces: monitor N gets N11, N12
+local function focus_extra(n)
+  return function()
+    local monitor = hl.get_active_monitor()
+    if not monitor then
+      return
+    end
+    local block = o.workspaces.workspace_id(monitor, 0) // o.workspaces.slots
+    local id = (block + 1) * 100 + 10 + n
+    hl.dispatch(hl.dsp.focus({ workspace = tostring(id) }))
+  end
+end
+
+hl.unbind("SUPER + code:21") -- was: shrink window left
+hl.unbind("SUPER + code:20") -- was: expand window left
+o.bind("SUPER + code:21", "Extra workspace 1", focus_extra(1))
+o.bind("SUPER + code:20", "Extra workspace 2", focus_extra(2))
 
 -- Resize windows
 hl.unbind("SUPER + SHIFT + CTRL + RIGHT") -- was: move window to right monitor

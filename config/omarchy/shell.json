@@ -3,7 +3,7 @@
     "layout": {
       "center": [
         {
-          "format": "dddd HH:mm",
+          "format": "ddd d MMM HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
           "verticalFormat": "HH\n—\nmm"
@@ -78,7 +78,8 @@
         {
           "id": "omarchy.system-update"
         }
-      ]
+      ],
+      "tray": []
     },
     "position": "top",
     "transparent": false
