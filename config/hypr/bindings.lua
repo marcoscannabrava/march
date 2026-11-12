@@ -86,23 +86,24 @@ o.bind("SUPER + CTRL + ALT + RIGHT", "Move window to next workspace", slot_actio
 o.bind("SUPER + CTRL + ALT + LEFT", "Move window to previous workspace", slot_action(o.workspaces.move_window, step(-1)))
 o.bind("SUPER + CTRL + ALT + DOWN", "Move window to empty workspace", slot_action(o.workspaces.move_window, first_empty_slot))
 
--- Extra workspaces: monitor N gets N11, N12
-local function focus_extra(n)
+-- Extra workspaces, one set per monitor
+local function on_extra(n, dsp)
   return function()
     local monitor = hl.get_active_monitor()
-    if not monitor then
-      return
+    if monitor then
+      hl.dispatch(dsp({ workspace = "name:" .. monitor.name .. "-extra" .. n }))
     end
-    local block = o.workspaces.workspace_id(monitor, 0) // o.workspaces.slots
-    local id = (block + 1) * 100 + 10 + n
-    hl.dispatch(hl.dsp.focus({ workspace = tostring(id) }))
   end
 end
 
-hl.unbind("SUPER + code:21") -- was: shrink window left
 hl.unbind("SUPER + code:20") -- was: expand window left
-o.bind("SUPER + code:21", "Extra workspace 1", focus_extra(1))
-o.bind("SUPER + code:20", "Extra workspace 2", focus_extra(2))
+hl.unbind("SUPER + code:21") -- was: shrink window left
+hl.unbind("SUPER + SHIFT + code:20") -- was: shrink window up
+hl.unbind("SUPER + SHIFT + code:21") -- was: expand window down
+o.bind("SUPER + code:20", "Extra workspace 1", on_extra(1, hl.dsp.focus))
+o.bind("SUPER + code:21", "Extra workspace 2", on_extra(2, hl.dsp.focus))
+o.bind("SUPER + SHIFT + code:20", "Move window to extra workspace 1", on_extra(1, hl.dsp.window.move))
+o.bind("SUPER + SHIFT + code:21", "Move window to extra workspace 2", on_extra(2, hl.dsp.window.move))
 
 -- Resize windows
 hl.unbind("SUPER + SHIFT + CTRL + RIGHT") -- was: move window to right monitor
