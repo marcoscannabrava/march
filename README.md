@@ -19,7 +19,7 @@
 |---|---|
 | `install.sh`, `install/` | the bootstrap command and its sub-steps |
 | `config/` | dotfiles symlinked into `$HOME`; `config/_home/*` keeps its subpath, the rest lands in `~/.config` |
-| `agents/skills/` | own claude skills, linked into `~/.claude/skills` by `./install.sh -a` |
+| `agents/skills/` | own skills, linked into claude, codex, and pi by `./install.sh -a` |
 | `scripts/` | executables linked into `/usr/local/lib/march` and `~/.local/bin` |
 | `systemd/` | backup service and timer units — see [systemd/README.md](systemd/README.md) |
 | `branding/`, `wallpapers/`, `sounds/`, `webapps/` | assets the installers copy or link |

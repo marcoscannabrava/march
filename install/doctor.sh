@@ -55,7 +55,9 @@ done
 echo "== agents =="
 for skill in agents/skills/*/; do
     skill="${skill%/}"
-    check_link "$skill" "$HOME/.claude/skills/$(basename "$skill")"
+    for dir in .claude .codex .agents; do
+        check_link "$skill" "$HOME/$dir/skills/$(basename "$skill")"
+    done
 done
 
 echo "== script symlinks =="
@@ -88,7 +90,7 @@ check_link branding/about.txt "$HOME/.config/omarchy/branding/about.txt"
 check_copy branding/logo.png /usr/share/plymouth/themes/omarchy/logo.png
 
 echo "== dangling march links =="
-for file in /usr/local/lib/march/* "$HOME/.claude/skills"/*; do
+for file in /usr/local/lib/march/* "$HOME/.claude/skills"/* "$HOME/.codex/skills"/* "$HOME/.agents/skills"/*; do
     if [ -L "$file" ] && [ ! -e "$file" ]; then
         fail "dangling" "$file"
     fi

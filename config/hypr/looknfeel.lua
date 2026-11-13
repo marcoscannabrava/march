@@ -11,6 +11,10 @@ hl.config({
     rounding = 2,
     rounding_power = 2,
   },
+  -- Apps cannot steal focus
+  misc = {
+    focus_on_activate = false,
+  },
 })
 
 -- Custom animation curves and speeds

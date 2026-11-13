@@ -38,7 +38,7 @@ usage() {
     echo "  -s, --symlink        Symlink dotfiles"
     echo "  -w, --wallpapers     Install wallpapers and splashscreen"
     echo "  -k, --keymap         Install keymap configuration"
-    echo "  -a, --agents         Link own claude skills"
+    echo "  -a, --agents         Link own skills (all agents)"
     echo ""
     echo "Example: $0 -pswka # installs packages, symlinks files, wallpapers, keymap, and agent skills"
     echo ""

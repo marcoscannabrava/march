@@ -29,7 +29,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus",
+  "model": "sonnet",
   "hooks": {
     "Notification": [
       {
@@ -82,7 +82,7 @@
       "effortLevel": "medium"
     },
     "claude-sonnet-5-5": {
-      "effortLevel": "low"
+      "effortLevel": "medium"
     }
   },
   "showThinkingSummaries": true,

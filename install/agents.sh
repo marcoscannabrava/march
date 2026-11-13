@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Link own skills (agents/skills) into claude.
+# Link own skills into every agent.
+# Targets: claude, codex, and ~/.agents (pi).
 # Idempotent: re-running reports "already" / skips and changes nothing.
 
 CUR_DIR="$(dirname "$(readlink -f "$0")")"
@@ -29,9 +30,12 @@ function ensure_link() {
 }
 
 log_purple "##### own skills #########"
+SKILL_DIRS=("$HOME/.claude/skills" "$HOME/.codex/skills" "$HOME/.agents/skills")
 for skill in "$REPO_DIR"/agents/skills/*/; do
     skill="${skill%/}"
-    ensure_link "$skill" "$HOME/.claude/skills/$(basename "$skill")"
+    for dir in "${SKILL_DIRS[@]}"; do
+        ensure_link "$skill" "$dir/$(basename "$skill")"
+    done
 done
 
 log_purple "###### stale cleanup #####"
