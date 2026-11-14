@@ -1,58 +1,25 @@
 ---
 name: explain
-description: Explain how code, a system, or a concept works. Start with a plain TL;DR for a reader with no background, then go deeper, and end with a glossary. Use when the user asks "how does X work", "explain X", "walk me through X", "what is X", or runs /explain.
+description: Explains code, a system, or a concept in plain words for a reader new to the codebase. Use whenever the user says "explain", "how does X work", "walk me through X", "what is X", or "why does X", or runs /explain.
 ---
 
 # Explain
 
-## Goal
+The reader is smart but new to this codebase and this field. Use simple words. Define each term before you use it.
 
-Make the reader understand X. Assume the reader is smart but knows nothing about this area.
+## Research
+- Read the code, docs, or other sources. Do not guess from names.
+- Follow the path from input to output. Note what goes in, what comes out, and what it touches.
+- If the question is not clear, ask a clarifying question.
+- If you are not sure about a link between parts, say so. Do not invent one.
+- For a large area, send multiple Explore agents, one per part. If their reports conflict, read the code yourself.
 
-## 1. Read before you explain
+## Output
+Fit the length to the question. A small question may need only the TL;DR. Skip empty sections. This is output is guidance only and doesn't need to be followed exactly. Use your judgment.
 
-- If the question is not clear, state your best guess and continue. Do not ask.
-- Find the entry point. Follow the path from input to output.
-- Find the edges: what goes in, what comes out, and which other parts it connects to.
-- Read the code. Do not guess from names.
-- If there is no code (a general concept), use docs and man pages, or what you know. Say which source you used.
-- Stop when you can describe each step without vague words.
-- If a part is not clear to you, say so. Do not invent a link between two parts.
-- For a large area, you can send 2–3 Explore agents, one for each part. Tell each agent to return file paths, the steps, the edges, surprises, and open questions. If two reports do not agree, read the code yourself. For a small area, do the work yourself.
+1. **TL;DR**: 2–4 sentences. What it does and why it exists. No jargon. An accurate everyday comparison helps.
+2. **How it works**: the steps in order. Name the real parts ("`backup` calls `rclone sync`"). Add `file:line` for key steps. Add an ASCII diagram only if it helps.
+3. **Gotchas**: surprises, sharp edges, and history behind odd code.
+4. **Glossary**: each term a newcomer may not know, as `**term**: meaning.`, in order of first use.
 
-## 2. Write the explanation
-
-Use this order. Skip a section if it is empty.
-
-### TL;DR
-
-- 2–4 sentences.
-- Use simple words. Assume no previous knowledge.
-- Say what X does and why it exists. Do not say how yet.
-- An everyday comparison is good if it is accurate.
-
-### How it works
-
-- This is the main section. Tell the flow as steps, in the order they occur.
-- Name the real parts: "`backup` calls `rclone sync`", not "the script delegates to a tool".
-- Add `file:line` references for important steps.
-- Add a small ASCII diagram only if it makes the flow clearer.
-- Prose is better than code. Show code only if it is the clearest way.
-- If a part is complex, say why it is complex.
-
-### Gotchas
-
-- Behavior that surprises people, sharp edges, and history that explains strange code.
-
-### Glossary
-
-- Each domain term from the explanation that a beginner may not know.
-- One line per term, two at most: `**term**: meaning.`
-- Use the order in which the terms occur in the explanation.
-
-## Style
-
-- Make the length fit the question. A small question gets a short answer, possibly only the TL;DR.
-- Short sentences. Active voice. Common words.
-- If a part is simple, keep it short. Do not add text to fill space.
-- Do not repeat the TL;DR in later sections.
+Use short sentences and active voice. Do not repeat the TL;DR.
