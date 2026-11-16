@@ -5,13 +5,13 @@
 hl.unbind("SUPER + T") -- was: toggle floating
 o.bind("SUPER + T", "Terminal", { launch = "xdg-terminal-exec" })
 
--- Apps
-o.bind("SUPER + E", "File manager", { launch = "nautilus --new-window" })
-o.bind("SUPER + B", "Browser", { omarchy = "browser" })
+-- Apps: focus if open, else launch
+o.bind("SUPER + E", "File manager", { launch = "nautilus --new-window", focus = "^org.gnome.Nautilus$" })
+o.bind("SUPER + B", "Browser", { launch = "omarchy-launch-browser", focus = "^google-chrome$" })
 o.bind("SUPER + SHIFT + ESCAPE", "Activity", { tui = "btop" })
 hl.unbind("SUPER + S") -- was: toggle scratchpad
-o.bind("SUPER + S", "Slack", { launch = "slack" })
-o.bind("SUPER + N", "Notes", "code ~/code/notes")
+o.bind("SUPER + S", "Slack", { launch = "slack", focus = "^slack$" })
+o.bind("SUPER + N", "Notes", { launch = "code ~/code/notes", focus = "notes - Visual Studio Code" })
 
 -- Web apps
 hl.unbind("SUPER + SHIFT + G") -- was: Signal
